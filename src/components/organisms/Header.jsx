@@ -1,10 +1,37 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
 import ThemeToggle from "@/components/molecules/ThemeToggle";
+import ProjectModal from "@/components/organisms/ProjectModal";
+import clientService from "@/services/api/clientService";
 
 const Header = ({ onMenuClick }) => {
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (showProjectModal) {
+      loadClients();
+    }
+  }, [showProjectModal]);
+
+  const loadClients = async () => {
+    try {
+      setLoading(true);
+      const clientsData = await clientService.getAll();
+      setClients(clientsData);
+    } catch (error) {
+      console.error("Failed to load clients:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleProjectCreated = () => {
+    setShowProjectModal(false);
+    // Project created successfully, modal handles toast notification
+  };
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
@@ -29,13 +56,13 @@ const Header = ({ onMenuClick }) => {
 <div className="flex items-center space-x-4">
         <ThemeToggle />
         
-        <Link 
-          to="/projects" 
+        <button
+          onClick={() => setShowProjectModal(true)}
           className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg hover:shadow-xl"
         >
           <ApperIcon name="Plus" className="h-4 w-4" />
           <span className="text-sm font-medium">New Project</span>
-        </Link>
+        </button>
         
 <div className="hidden sm:flex items-center space-x-3">
           <div className="w-8 h-8 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full flex items-center justify-center shadow-lg">
@@ -45,8 +72,16 @@ const Header = ({ onMenuClick }) => {
             <div className="font-medium text-slate-700 dark:text-slate-200">John Doe</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">Freelancer</div>
           </div>
-        </div>
+</div>
       </div>
+      
+      <ProjectModal
+        isOpen={showProjectModal}
+        onClose={() => setShowProjectModal(false)}
+        project={null}
+        clients={clients}
+        onProjectSaved={handleProjectCreated}
+      />
     </motion.header>
   );
 };

@@ -3,11 +3,14 @@ import { motion } from "framer-motion";
 import StatCard from "@/components/molecules/StatCard";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
+import ClientModal from "@/components/organisms/ClientModal";
+import ProjectModal from "@/components/organisms/ProjectModal";
+import TaskModal from "@/components/organisms/TaskModal";
+import InvoiceModal from "@/components/organisms/InvoiceModal";
 import clientService from "@/services/api/clientService";
 import projectService from "@/services/api/projectService";
 import taskService from "@/services/api/taskService";
 import invoiceService from "@/services/api/invoiceService";
-
 const Dashboard = () => {
   const [stats, setStats] = useState({
     totalClients: 0,
@@ -18,25 +21,39 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const loadDashboardData = async () => {
+  // Modal states
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+
+  // Data for modals
+  const [clients, setClients] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [modalLoading, setModalLoading] = useState(false);
+const loadDashboardData = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const [clients, projects, tasks, invoices] = await Promise.all([
+      const [clientsData, projectsData, tasks, invoices] = await Promise.all([
         clientService.getAll(),
         projectService.getAll(),
         taskService.getAll(),
         invoiceService.getAll()
       ]);
 
-      const activeProjects = projects.filter(p => p.status === "In Progress").length;
+      // Store data for modals
+      setClients(clientsData);
+      setProjects(projectsData);
+
+      const activeProjects = projectsData.filter(p => p.status === "In Progress").length;
       const pendingTasks = tasks.filter(t => t.status !== "Completed").length;
       const paidInvoices = invoices.filter(i => i.status === "Paid");
       const totalRevenue = paidInvoices.reduce((sum, invoice) => sum + (invoice.amount || 0), 0);
 
       setStats({
-        totalClients: clients.length,
+        totalClients: clientsData.length,
         activeProjects,
         pendingTasks,
         totalRevenue
@@ -45,6 +62,64 @@ const Dashboard = () => {
       setError(err.message || "Failed to load dashboard data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadModalData = async (modalType) => {
+    if (modalType === 'project' || modalType === 'task' || modalType === 'invoice') {
+      setModalLoading(true);
+      try {
+        const [clientsData, projectsData] = await Promise.all([
+          clientService.getAll(),
+          projectService.getAll()
+        ]);
+        setClients(clientsData);
+        setProjects(projectsData);
+      } catch (error) {
+        console.error("Failed to load modal data:", error);
+      } finally {
+        setModalLoading(false);
+      }
+    }
+  };
+
+  const handleClientCreated = () => {
+    setShowClientModal(false);
+    loadDashboardData();
+  };
+
+  const handleProjectCreated = () => {
+    setShowProjectModal(false);
+    loadDashboardData();
+  };
+
+  const handleTaskCreated = () => {
+    setShowTaskModal(false);
+    loadDashboardData();
+  };
+
+  const handleInvoiceCreated = () => {
+    setShowInvoiceModal(false);
+    loadDashboardData();
+  };
+
+  const openModal = (modalType) => {
+    switch (modalType) {
+      case 'client':
+        setShowClientModal(true);
+        break;
+      case 'project':
+        setShowProjectModal(true);
+        loadModalData('project');
+        break;
+      case 'task':
+        setShowTaskModal(true);
+        loadModalData('task');
+        break;
+      case 'invoice':
+        setShowInvoiceModal(true);
+        loadModalData('invoice');
+        break;
     }
   };
 
@@ -180,26 +255,69 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
             Quick Actions
           </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <button className="p-4 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-center hover:scale-105 transition-all duration-200 shadow-lg">
+<div className="grid grid-cols-2 gap-4">
+            <button 
+              onClick={() => openModal('client')}
+              className="p-4 rounded-lg bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-center hover:scale-105 transition-all duration-200 shadow-lg"
+            >
               <div className="text-2xl mb-2">👤</div>
               <div className="text-sm font-medium">Add Client</div>
             </button>
-            <button className="p-4 rounded-lg bg-gradient-to-r from-secondary-500 to-accent-500 text-white text-center hover:scale-105 transition-all duration-200 shadow-lg">
+            <button 
+              onClick={() => openModal('project')}
+              className="p-4 rounded-lg bg-gradient-to-r from-secondary-500 to-accent-500 text-white text-center hover:scale-105 transition-all duration-200 shadow-lg"
+            >
               <div className="text-2xl mb-2">📁</div>
               <div className="text-sm font-medium">New Project</div>
             </button>
-            <button className="p-4 rounded-lg bg-gradient-to-r from-accent-500 to-primary-500 text-white text-center hover:scale-105 transition-all duration-200 shadow-lg">
+            <button 
+              onClick={() => openModal('task')}
+              className="p-4 rounded-lg bg-gradient-to-r from-accent-500 to-primary-500 text-white text-center hover:scale-105 transition-all duration-200 shadow-lg"
+            >
               <div className="text-2xl mb-2">✅</div>
               <div className="text-sm font-medium">Add Task</div>
             </button>
-            <button className="p-4 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-center hover:scale-105 transition-all duration-200 shadow-lg">
+            <button 
+              onClick={() => openModal('invoice')}
+              className="p-4 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-center hover:scale-105 transition-all duration-200 shadow-lg"
+            >
               <div className="text-2xl mb-2">📄</div>
               <div className="text-sm font-medium">Create Invoice</div>
             </button>
           </div>
         </motion.div>
-      </div>
+</div>
+
+      {/* Modals */}
+      <ClientModal
+        isOpen={showClientModal}
+        onClose={() => setShowClientModal(false)}
+        onClientCreated={handleClientCreated}
+      />
+
+      <ProjectModal
+        isOpen={showProjectModal}
+        onClose={() => setShowProjectModal(false)}
+        project={null}
+        clients={clients}
+        onProjectSaved={handleProjectCreated}
+      />
+
+      <TaskModal
+        isOpen={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+        task={null}
+        projects={projects}
+        onSubmit={handleTaskCreated}
+      />
+
+      <InvoiceModal
+        isOpen={showInvoiceModal}
+        onClose={() => setShowInvoiceModal(false)}
+        clients={clients}
+        projects={projects}
+        onInvoiceCreated={handleInvoiceCreated}
+      />
     </div>
   );
 };
