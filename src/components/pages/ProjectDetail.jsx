@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { differenceInDays, format } from "date-fns";
 import { toast } from "react-toastify";
 import Chart from "react-apexcharts";
-import timeTrackingService from "@/services/api/timeTrackingService";
 import ApperIcon from "@/components/ApperIcon";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
@@ -17,6 +16,7 @@ import ProgressBar from "@/components/molecules/ProgressBar";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 import taskService from "@/services/api/taskService";
+import timeTrackingService from "@/services/api/timeTrackingService";
 import clientService from "@/services/api/clientService";
 import projectService from "@/services/api/projectService";
 
@@ -451,11 +451,10 @@ const fetchProjectDetails = async () => {
                 </div>
               )}
             </div>
+</div>
           </div>
         </div>
-      </div>
-
-      {/* Timeline Visualization */}
+      </motion.div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -474,7 +473,7 @@ const fetchProjectDetails = async () => {
       </motion.div>
 
       {/* Budget Visualization */}
-      <motion.div
+<motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
@@ -489,7 +488,7 @@ const fetchProjectDetails = async () => {
           type="bar"
           height={300}
         />
-</motion.div>
+      </motion.div>
 
       {/* Task Board */}
       <motion.div
