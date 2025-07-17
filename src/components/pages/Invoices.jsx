@@ -137,10 +137,9 @@ setEditingInvoice(null);
     return <Loading type="table" />;
   }
 
-  if (error) {
+if (error) {
     return <Error message={error} onRetry={loadData} />;
   }
-}
 
   return (
     <div className="space-y-6">
