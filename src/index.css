@@ -61,3 +61,35 @@
 .Toastify__toast--info {
   @apply bg-blue-50/90 dark:bg-blue-900/90 border-blue-200/50 dark:border-blue-700/50;
 }
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Kanban board drag and drop styles */
+.kanban-column {
+  min-height: 200px;
+  transition: background-color 0.2s ease;
+}
+
+.kanban-column.drag-over {
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.task-card {
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.task-card.dragging {
+  transform: rotate(2deg) scale(1.05);
+  z-index: 1000;
+}

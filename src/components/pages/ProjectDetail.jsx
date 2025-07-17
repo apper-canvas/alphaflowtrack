@@ -12,6 +12,7 @@ import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import ProjectModal from "@/components/organisms/ProjectModal";
 import TaskList from "@/components/organisms/TaskList";
+import KanbanBoard from "@/components/organisms/KanbanBoard";
 import projectService from "@/services/api/projectService";
 import clientService from "@/services/api/clientService";
 import taskService from "@/services/api/taskService";
@@ -396,7 +397,7 @@ const ProjectDetail = () => {
         />
       </motion.div>
 
-      {/* Task List Preview */}
+{/* Task Board */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -416,7 +417,39 @@ const ProjectDetail = () => {
           </Button>
         </div>
         {tasks.length > 0 ? (
-          <TaskList tasks={tasks} projects={[project]} />
+          <KanbanBoard
+            tasks={tasks}
+            projects={[project]}
+            onEdit={(task) => toast.info(`Edit task: ${task.title}`)}
+            onDelete={async (task) => {
+              if (window.confirm(`Are you sure you want to delete "${task.title}"?`)) {
+                try {
+                  await taskService.delete(task.Id);
+                  setTasks(prev => prev.filter(t => t.Id !== task.Id));
+                  toast.success("Task deleted successfully");
+                } catch (err) {
+                  toast.error("Failed to delete task");
+                }
+              }
+            }}
+            onDragEnd={async (result) => {
+              const { destination, source, draggableId } = result;
+              
+              if (!destination) return;
+              if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
+              const taskId = parseInt(draggableId);
+              const newStatus = destination.droppableId;
+
+              try {
+                const updatedTask = await taskService.update(taskId, { status: newStatus });
+                setTasks(prev => prev.map(t => t.Id === taskId ? updatedTask : t));
+                toast.success(`Task moved to ${newStatus}`);
+              } catch (err) {
+                toast.error("Failed to update task status");
+              }
+            }}
+          />
         ) : (
           <div className="text-center py-8 text-slate-500 dark:text-slate-400">
             No tasks found for this project
