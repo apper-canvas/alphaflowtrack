@@ -374,7 +374,7 @@ const fetchProjectDetails = async () => {
         </motion.div>
       </div>
 
-      {/* Time Tracking Section */}
+{/* Time Tracking Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -447,7 +447,7 @@ const fetchProjectDetails = async () => {
               {timeEntries.length === 0 && (
                 <div className="text-center py-6 text-slate-500 dark:text-slate-400">
                   <ApperIcon name="Clock" className="h-8 w-8 mx-auto mb-2 opacity-50" />
-<p className="text-sm">No time entries yet</p>
+                  <p className="text-sm">No time entries yet</p>
                 </div>
               )}
             </div>

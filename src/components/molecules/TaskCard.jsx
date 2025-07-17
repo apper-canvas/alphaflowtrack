@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
@@ -78,7 +78,9 @@ const TaskCard = ({ task, projectName, onEdit, onDelete, isDragging }) => {
     } else {
       return `${minutes}:${secs.toString().padStart(2, '0')}`;
     }
-  };
+};
+  
+  const getPriorityVariant = (priority) => {
   const getPriorityVariant = (priority) => {
     const variants = {
       High: "error",
@@ -157,8 +159,8 @@ const TaskCard = ({ task, projectName, onEdit, onDelete, isDragging }) => {
           </Button>
         </div>
       </div>
-
 <div className="space-y-2">
+        <div className="flex items-center justify-between">
         <div className="flex items-center justify-between">
           <Badge 
             variant={getPriorityVariant(task.priority)} 
@@ -191,10 +193,10 @@ const TaskCard = ({ task, projectName, onEdit, onDelete, isDragging }) => {
         {task.description && (
           <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
             {task.description}
-          </p>
+</p>
         )}
 
-<div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700">
+        <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
             <span className="text-xs text-slate-500 dark:text-slate-400">
