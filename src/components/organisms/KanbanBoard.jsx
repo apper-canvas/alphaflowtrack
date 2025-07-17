@@ -6,7 +6,13 @@ import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 
-const KanbanBoard = ({ tasks, projects, onStatusChange, onEdit, onDelete }) => {
+const KanbanBoard = ({ 
+  tasks = [], 
+  projects = [], 
+  onStatusChange = () => {}, 
+  onEdit = () => {}, 
+  onDelete = () => {} 
+}) => {
   const columns = [
     { id: "To Do", title: "To Do", color: "bg-slate-100 dark:bg-slate-700" },
     { id: "In Progress", title: "In Progress", color: "bg-amber-50 dark:bg-amber-900/20" },
