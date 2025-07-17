@@ -1,10 +1,10 @@
-import React from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { motion } from "framer-motion";
-import { format } from "date-fns";
-import ApperIcon from "@/components/ApperIcon";
-import Badge from "@/components/atoms/Badge";
-import Button from "@/components/atoms/Button";
+import React from 'react'
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd'
+import { motion } from 'framer-motion'
+import { format } from 'date-fns'
+import ApperIcon from '@/components/ApperIcon'
+import Badge from '@/components/atoms/Badge'
+import Button from '@/components/atoms/Button'
 
 const columns = [
   { id: "To Do", title: "To Do", color: "bg-slate-100 dark:bg-slate-800" },
