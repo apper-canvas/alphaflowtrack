@@ -7,12 +7,12 @@ import Label from "@/components/atoms/Label";
 import Button from "@/components/atoms/Button";
 
 const TaskModal = ({ isOpen, onClose, task, projects, onSubmit }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     title: "",
     description: "",
     projectId: "",
     priority: "Medium",
-    status: "To Do",
+    status: "Pending",
     dueDate: "",
     assignedTo: ""
   });
@@ -25,18 +25,18 @@ useEffect(() => {
         title: task.title_c || "",
         description: task.description || "",
         projectId: task.projectId_c || "",
-        priority: task.priority_c || "Medium",
-        status: task.status_c || "To Do",
+priority: task.priority_c || "Medium",
+        status: task.status_c || "Pending",
         dueDate: task.dueDate_c ? new Date(task.dueDate_c).toISOString().split('T')[0] : "",
         assignedTo: task.assignedTo_c || ""
       });
-    } else {
+} else {
       setFormData({
         title: "",
         description: "",
         projectId: projects.length > 0 ? projects[0].Id : "",
         priority: "Medium",
-        status: "To Do",
+        status: "Pending",
         dueDate: "",
         assignedTo: ""
       });
@@ -91,11 +91,11 @@ useEffect(() => {
     onSubmit(submitData);
   };
 
-  const statusOptions = [
-    { value: "To Do", label: "To Do", icon: "Circle" },
+const statusOptions = [
+    { value: "Pending", label: "Pending", icon: "Circle" },
     { value: "In Progress", label: "In Progress", icon: "Clock" },
-    { value: "Review", label: "Review", icon: "Eye" },
-    { value: "Done", label: "Done", icon: "CheckCircle" }
+    { value: "Completed", label: "Completed", icon: "CheckCircle" },
+    { value: "Blocked", label: "Blocked", icon: "AlertCircle" }
   ];
 
   const priorityOptions = [
