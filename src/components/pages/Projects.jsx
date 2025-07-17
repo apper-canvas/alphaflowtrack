@@ -10,14 +10,15 @@ import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import projectService from "@/services/api/projectService";
 import clientService from "@/services/api/clientService";
-
+import ProjectModal from "@/components/organisms/ProjectModal";
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
   const loadData = async () => {
     try {
       setLoading(true);
@@ -39,8 +40,9 @@ const Projects = () => {
     loadData();
   }, []);
 
-  const handleEdit = (project) => {
-    toast.info(`Edit project: ${project.name}`);
+const handleEdit = (project) => {
+    setEditingProject(project);
+    setIsModalOpen(true);
   };
 
   const handleDelete = async (project) => {
@@ -55,8 +57,9 @@ const Projects = () => {
     }
   };
 
-  const handleAddProject = () => {
-    toast.info("Add new project functionality");
+const handleAddProject = () => {
+    setEditingProject(null);
+    setIsModalOpen(true);
   };
 
   const filteredProjects = projects.filter(project =>
@@ -127,9 +130,27 @@ const Projects = () => {
             clients={clients}
             onEdit={handleEdit}
             onDelete={handleDelete}
-          />
+/>
         </motion.div>
       )}
+
+      <ProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        project={editingProject}
+        clients={clients}
+        onProjectSaved={(project) => {
+          if (editingProject) {
+            setProjects(prev => prev.map(p => p.Id === project.Id ? project : p));
+            toast.success("Project updated successfully");
+          } else {
+            setProjects(prev => [...prev, project]);
+            toast.success("Project created successfully");
+          }
+          setIsModalOpen(false);
+          setEditingProject(null);
+        }}
+      />
     </div>
   );
 };
