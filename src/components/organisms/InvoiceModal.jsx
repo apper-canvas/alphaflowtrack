@@ -359,4 +359,5 @@ const PaymentDateModal = ({ isOpen, onClose, invoice, onConfirm }) => {
   );
 };
 
+export default InvoiceModal;
 export { PaymentDateModal };
