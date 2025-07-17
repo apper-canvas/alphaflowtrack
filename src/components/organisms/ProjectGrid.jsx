@@ -52,15 +52,21 @@ const ProjectGrid = ({ projects, clients, onEdit, onDelete }) => {
                 {getClientName(project.clientId)}
               </p>
             </div>
-            <div className="flex items-center space-x-2">
+<div className="flex items-center space-x-2">
               <button
-                onClick={() => onEdit && onEdit(project)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit && onEdit(project);
+                }}
                 className="p-1 rounded hover:bg-white/10 transition-colors"
               >
                 <ApperIcon name="Edit2" className="h-4 w-4 text-slate-500" />
               </button>
               <button
-                onClick={() => onDelete && onDelete(project)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete && onDelete(project);
+                }}
                 className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors"
               >
                 <ApperIcon name="Trash2" className="h-4 w-4 text-red-500" />

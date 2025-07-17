@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import SearchBar from "@/components/molecules/SearchBar";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
 import InvoiceTable from "@/components/organisms/InvoiceTable";
 import InvoiceModal, { PaymentDateModal } from "@/components/organisms/InvoiceModal";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
+import SearchBar from "@/components/molecules/SearchBar";
+import Button from "@/components/atoms/Button";
 import invoiceService from "@/services/api/invoiceService";
 import clientService from "@/services/api/clientService";
 import projectService from "@/services/api/projectService";
@@ -17,12 +17,14 @@ const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [clients, setClients] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [editingInvoice, setEditingInvoice] = useState(null);
   const loadData = async () => {
     try {
       setLoading(true);
@@ -44,10 +46,11 @@ const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     loadData();
-  }, []);
+}, []);
 
-const handleEdit = (invoice) => {
-    toast.info(`Edit invoice: INV-${String(invoice.Id).padStart(4, "0")}`);
+  const handleEdit = (invoice) => {
+    setEditingInvoice(invoice);
+    setShowEditModal(true);
   };
 
   const handleDelete = async (invoice) => {
@@ -96,16 +99,21 @@ const handleEdit = (invoice) => {
       toast.error("Failed to update payment status");
       throw err;
     }
-  };
+};
 
-const handleCreateInvoice = () => {
+  const handleCreateInvoice = () => {
     setShowCreateModal(true);
   };
-
-  const handleInvoiceCreated = () => {
+const handleInvoiceCreated = () => {
     loadData();
   };
 
+  const handleInvoiceUpdated = () => {
+    loadData();
+    setShowEditModal(false);
+setEditingInvoice(null);
+  };
+  
   const filteredInvoices = invoices.filter(invoice => {
     const client = clients.find(c => c.Id === invoice.clientId);
     const project = projects.find(p => p.Id === invoice.projectId);
@@ -116,14 +124,15 @@ const handleCreateInvoice = () => {
       invoice.status.toLowerCase().includes(searchLower) ||
       client?.name.toLowerCase().includes(searchLower) ||
       project?.name.toLowerCase().includes(searchLower)
-    );
-});
+);
+  });
 
   const calculateOutstandingAmount = () => {
     return invoices
       .filter(invoice => invoice.status !== "Paid")
-      .reduce((total, invoice) => total + invoice.amount, 0);
+.reduce((total, invoice) => total + invoice.amount, 0);
   };
+
   if (loading) {
     return <Loading type="table" />;
   }
@@ -131,11 +140,11 @@ const handleCreateInvoice = () => {
   if (error) {
     return <Error message={error} onRetry={loadData} />;
   }
+}
 
   return (
-<div className="space-y-6">
+    <div className="space-y-6">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
       >
@@ -206,9 +215,9 @@ const handleCreateInvoice = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+transition={{ delay: 0.2 }}
         >
-<InvoiceTable
+          <InvoiceTable
             invoices={filteredInvoices}
             clients={clients}
             projects={projects}
@@ -223,9 +232,20 @@ const handleCreateInvoice = () => {
       <InvoiceModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
+clients={clients}
+        projects={projects}
+        onInvoiceCreated={handleInvoiceCreated}
+      />
+      <InvoiceModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setEditingInvoice(null);
+        }}
         clients={clients}
         projects={projects}
-onInvoiceCreated={handleInvoiceCreated}
+        invoice={editingInvoice}
+        onInvoiceUpdated={handleInvoiceUpdated}
       />
 
       <PaymentDateModal

@@ -101,6 +101,7 @@ const KanbanBoard = ({ tasks, projects, onEdit, onDelete, onDragEnd }) => {
                               projectName={getProjectName(task.projectId)}
                               onEdit={onEdit}
                               onDelete={onDelete}
+                              onView={(task) => onEdit && onEdit(task)}
                               isDragging={snapshot.isDragging}
                             />
                           </div>

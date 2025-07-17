@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 import timeTrackingService from "@/services/api/timeTrackingService";
-const TaskCard = ({ task, projectName, onEdit, onDelete, isDragging }) => {
+
+const TaskCard = ({ task, projectName, onEdit, onDelete, onView, isDragging = false }) => {
   const [activeTimer, setActiveTimer] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isTimerLoading, setIsTimerLoading] = useState(false);
@@ -62,7 +63,8 @@ const TaskCard = ({ task, projectName, onEdit, onDelete, isDragging }) => {
         toast.success(`Timer started for ${task.title}`);
       }
     } catch (err) {
-      toast.error(err.message || "Failed to toggle timer");
+      console.error("Error toggling timer:", err);
+      toast.error("Failed to toggle timer");
     } finally {
       setIsTimerLoading(false);
     }
@@ -78,10 +80,9 @@ const TaskCard = ({ task, projectName, onEdit, onDelete, isDragging }) => {
     } else {
       return `${minutes}:${secs.toString().padStart(2, '0')}`;
     }
-};
+  };
   
-  const getPriorityVariant = (priority) => {
-  const getPriorityVariant = (priority) => {
+const getPriorityVariant = (priority) => {
     const variants = {
       High: "error",
       Medium: "warning", 
@@ -160,7 +161,6 @@ const TaskCard = ({ task, projectName, onEdit, onDelete, isDragging }) => {
         </div>
       </div>
 <div className="space-y-2">
-        <div className="flex items-center justify-between">
         <div className="flex items-center justify-between">
           <Badge 
             variant={getPriorityVariant(task.priority)} 
