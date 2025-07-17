@@ -5,6 +5,7 @@ import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
 import InvoiceTable from "@/components/organisms/InvoiceTable";
+import InvoiceModal from "@/components/organisms/InvoiceModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
@@ -19,6 +20,7 @@ const Invoices = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const loadData = async () => {
     try {
@@ -59,8 +61,12 @@ const Invoices = () => {
     }
   };
 
-  const handleCreateInvoice = () => {
-    toast.info("Create new invoice functionality");
+const handleCreateInvoice = () => {
+    setShowCreateModal(true);
+  };
+
+  const handleInvoiceCreated = () => {
+    loadData();
   };
 
   const filteredInvoices = invoices.filter(invoice => {
@@ -97,7 +103,7 @@ const Invoices = () => {
             Manage billing and track payment status for your projects
           </p>
         </div>
-        <Button onClick={handleCreateInvoice} className="w-full sm:w-auto">
+<Button onClick={handleCreateInvoice} className="w-full sm:w-auto">
           <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
           Create Invoice
         </Button>
@@ -141,8 +147,16 @@ const Invoices = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
-        </motion.div>
+</motion.div>
       )}
+
+      <InvoiceModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        clients={clients}
+        projects={projects}
+        onInvoiceCreated={handleInvoiceCreated}
+      />
     </div>
   );
 };
