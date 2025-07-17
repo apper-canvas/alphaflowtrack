@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
 import ThemeToggle from "@/components/molecules/ThemeToggle";
@@ -25,11 +26,18 @@ const Header = ({ onMenuClick }) => {
           <h1 className="text-lg font-bold gradient-text">FlowTrack</h1>
         </div>
       </div>
-
-      <div className="flex items-center space-x-4">
+<div className="flex items-center space-x-4">
         <ThemeToggle />
         
-        <div className="hidden sm:flex items-center space-x-3">
+        <Link 
+          to="/projects" 
+          className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+        >
+          <ApperIcon name="Plus" className="h-4 w-4" />
+          <span className="text-sm font-medium">New Project</span>
+        </Link>
+        
+<div className="hidden sm:flex items-center space-x-3">
           <div className="w-8 h-8 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full flex items-center justify-center shadow-lg">
             <ApperIcon name="User" className="h-4 w-4 text-white" />
           </div>
