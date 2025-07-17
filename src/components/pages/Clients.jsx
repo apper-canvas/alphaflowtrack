@@ -17,6 +17,7 @@ const Clients = () => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingClient, setEditingClient] = useState(null);
 
   const loadClients = async () => {
     try {
@@ -35,8 +36,9 @@ const Clients = () => {
     loadClients();
   }, []);
 
-  const handleEdit = (client) => {
-    toast.info(`Edit client: ${client.name}`);
+const handleEdit = (client) => {
+    setIsModalOpen(true);
+    setEditingClient(client);
   };
 
   const handleDelete = async (client) => {
@@ -55,12 +57,19 @@ const handleAddClient = () => {
     setIsModalOpen(true);
   };
 
-  const handleClientCreated = (newClient) => {
+const handleClientCreated = (newClient) => {
     setClients(prev => [...prev, newClient]);
+  };
+
+  const handleClientUpdated = (updatedClient) => {
+    setClients(prev => prev.map(client => 
+      client.Id === updatedClient.Id ? updatedClient : client
+    ));
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setEditingClient(null);
   };
 
   const filteredClients = clients.filter(client =>
@@ -135,10 +144,12 @@ const handleAddClient = () => {
         </motion.div>
 )}
       
-      <ClientModal
+<ClientModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onClientCreated={handleClientCreated}
+        onClientUpdated={handleClientUpdated}
+        editingClient={editingClient}
       />
     </div>
   );

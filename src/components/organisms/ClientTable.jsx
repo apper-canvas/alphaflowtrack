@@ -1,10 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 
 const ClientTable = ({ clients, onEdit, onDelete }) => {
+  const navigate = useNavigate();
+
+  const handleClientClick = (client) => {
+    navigate(`/clients/${client.Id}`);
+  };
   if (!clients || clients.length === 0) {
     return null;
   }
@@ -33,13 +39,14 @@ const ClientTable = ({ clients, onEdit, onDelete }) => {
             </tr>
           </thead>
           <tbody>
-            {clients.map((client, index) => (
+{clients.map((client, index) => (
               <motion.tr
                 key={client.Id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="border-b border-white/5 dark:border-slate-700/30 hover:bg-white/5 dark:hover:bg-slate-700/20 transition-colors"
+                className="border-b border-white/5 dark:border-slate-700/30 hover:bg-white/5 dark:hover:bg-slate-700/20 transition-colors cursor-pointer"
+                onClick={() => handleClientClick(client)}
               >
                 <td className="p-4">
                   <div className="flex items-center space-x-3">
@@ -74,18 +81,24 @@ const ClientTable = ({ clients, onEdit, onDelete }) => {
                   </div>
                 </td>
                 <td className="p-4">
-                  <div className="flex items-center justify-end space-x-2">
+<div className="flex items-center justify-end space-x-2">
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onEdit && onEdit(client)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit && onEdit(client);
+                      }}
                     >
                       <ApperIcon name="Edit2" className="h-4 w-4" />
                     </Button>
-                    <Button
+<Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onDelete && onDelete(client)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete && onDelete(client);
+                      }}
                       className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                     >
                       <ApperIcon name="Trash2" className="h-4 w-4" />
