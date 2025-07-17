@@ -5,7 +5,7 @@ import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 
-const InvoiceTable = ({ invoices, clients, projects, onEdit, onDelete }) => {
+const InvoiceTable = ({ invoices, clients, projects, onEdit, onDelete, onMarkAsSent, onMarkAsPaid }) => {
   if (!invoices || invoices.length === 0) {
     return null;
   }
@@ -105,8 +105,30 @@ const InvoiceTable = ({ invoices, clients, projects, onEdit, onDelete }) => {
                     {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
                   </div>
                 </td>
-                <td className="p-4">
+<td className="p-4">
                   <div className="flex items-center justify-end space-x-2">
+                    {invoice.status === "Draft" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onMarkAsSent && onMarkAsSent(invoice)}
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                        title="Mark as Sent"
+                      >
+                        <ApperIcon name="Send" className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {invoice.status === "Sent" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onMarkAsPaid && onMarkAsPaid(invoice)}
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
+                        title="Mark as Paid"
+                      >
+                        <ApperIcon name="DollarSign" className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"

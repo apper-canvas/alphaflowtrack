@@ -49,12 +49,30 @@ class InvoiceService {
     });
   }
 
-  async update(id, invoiceData) {
+async update(id, invoiceData) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const index = this.invoices.findIndex(i => i.Id === parseInt(id));
         if (index !== -1) {
           this.invoices[index] = { ...this.invoices[index], ...invoiceData };
+          resolve({ ...this.invoices[index] });
+        } else {
+          reject(new Error("Invoice not found"));
+        }
+      }, 300);
+    });
+  }
+
+  async updateStatus(id, status, paymentDate = null) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = this.invoices.findIndex(i => i.Id === parseInt(id));
+        if (index !== -1) {
+          const updateData = { status };
+          if (paymentDate) {
+            updateData.paymentDate = new Date(paymentDate).toISOString();
+          }
+          this.invoices[index] = { ...this.invoices[index], ...updateData };
           resolve({ ...this.invoices[index] });
         } else {
           reject(new Error("Invoice not found"));

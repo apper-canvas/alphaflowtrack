@@ -5,7 +5,7 @@ import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
 import InvoiceTable from "@/components/organisms/InvoiceTable";
-import InvoiceModal from "@/components/organisms/InvoiceModal";
+import InvoiceModal, { PaymentDateModal } from "@/components/organisms/InvoiceModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
@@ -19,9 +19,10 @@ const Invoices = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+const [searchTerm, setSearchTerm] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
-
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
   const loadData = async () => {
     try {
       setLoading(true);
@@ -45,7 +46,7 @@ const Invoices = () => {
     loadData();
   }, []);
 
-  const handleEdit = (invoice) => {
+const handleEdit = (invoice) => {
     toast.info(`Edit invoice: INV-${String(invoice.Id).padStart(4, "0")}`);
   };
 
@@ -58,6 +59,42 @@ const Invoices = () => {
       } catch (err) {
         toast.error("Failed to delete invoice");
       }
+    }
+  };
+
+  const handleMarkAsSent = async (invoice) => {
+    if (window.confirm(`Mark invoice INV-${String(invoice.Id).padStart(4, "0")} as sent?`)) {
+      try {
+        await invoiceService.updateStatus(invoice.Id, "Sent");
+        setInvoices(prev => prev.map(i => 
+          i.Id === invoice.Id ? { ...i, status: "Sent" } : i
+        ));
+        toast.success("Invoice marked as sent");
+      } catch (err) {
+        toast.error("Failed to update invoice status");
+      }
+    }
+  };
+
+  const handleMarkAsPaid = (invoice) => {
+    setSelectedInvoice(invoice);
+    setShowPaymentModal(true);
+  };
+
+  const handleConfirmPayment = async (paymentDate) => {
+    try {
+      await invoiceService.updateStatus(selectedInvoice.Id, "Paid", paymentDate);
+      setInvoices(prev => prev.map(i => 
+        i.Id === selectedInvoice.Id 
+          ? { ...i, status: "Paid", paymentDate: new Date(paymentDate).toISOString() }
+          : i
+      ));
+      toast.success("Invoice marked as paid");
+      setShowPaymentModal(false);
+      setSelectedInvoice(null);
+    } catch (err) {
+      toast.error("Failed to update payment status");
+      throw err;
     }
   };
 
@@ -80,8 +117,13 @@ const handleCreateInvoice = () => {
       client?.name.toLowerCase().includes(searchLower) ||
       project?.name.toLowerCase().includes(searchLower)
     );
-  });
+});
 
+  const calculateOutstandingAmount = () => {
+    return invoices
+      .filter(invoice => invoice.status !== "Paid")
+      .reduce((total, invoice) => total + invoice.amount, 0);
+  };
   if (loading) {
     return <Loading type="table" />;
   }
@@ -91,7 +133,7 @@ const handleCreateInvoice = () => {
   }
 
   return (
-    <div className="space-y-6">
+<div className="space-y-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -103,10 +145,36 @@ const handleCreateInvoice = () => {
             Manage billing and track payment status for your projects
           </p>
         </div>
-<Button onClick={handleCreateInvoice} className="w-full sm:w-auto">
+        <Button onClick={handleCreateInvoice} className="w-full sm:w-auto">
           <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
           Create Invoice
         </Button>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="glass-card rounded-xl p-6"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+              Outstanding Amount
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Total amount from unpaid invoices
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl font-bold text-red-600 dark:text-red-400">
+              ${calculateOutstandingAmount().toLocaleString()}
+            </div>
+            <div className="text-sm text-slate-500 dark:text-slate-400">
+              {invoices.filter(i => i.status !== "Paid").length} unpaid invoices
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       <motion.div
@@ -140,14 +208,16 @@ const handleCreateInvoice = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <InvoiceTable
+<InvoiceTable
             invoices={filteredInvoices}
             clients={clients}
             projects={projects}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onMarkAsSent={handleMarkAsSent}
+            onMarkAsPaid={handleMarkAsPaid}
           />
-</motion.div>
+        </motion.div>
       )}
 
       <InvoiceModal
@@ -155,7 +225,17 @@ const handleCreateInvoice = () => {
         onClose={() => setShowCreateModal(false)}
         clients={clients}
         projects={projects}
-        onInvoiceCreated={handleInvoiceCreated}
+onInvoiceCreated={handleInvoiceCreated}
+      />
+
+      <PaymentDateModal
+        isOpen={showPaymentModal}
+        onClose={() => {
+          setShowPaymentModal(false);
+          setSelectedInvoice(null);
+        }}
+        invoice={selectedInvoice}
+        onConfirm={handleConfirmPayment}
       />
     </div>
   );
