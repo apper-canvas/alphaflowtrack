@@ -1,3 +1,5 @@
+import React from "react";
+import Error from "@/components/ui/Error";
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class ProjectService {
@@ -55,7 +57,7 @@ class ProjectService {
     }
   }
 
-  async getById(id) {
+async getById(id) {
     try {
       await delay(200);
       const params = {
@@ -71,12 +73,14 @@ class ProjectService {
           { field: { Name: "description_c" } },
           { field: { Name: "startDate_c" } },
           { field: { Name: "endDate_c" } },
-          { field: { Name: "clientId_c" } }
+          { 
+            field: { Name: "clientId_c" },
+            referenceField: { field: { Name: "Name" } }
+          }
         ]
       };
       
       const response = await this.getApperClient().getRecordById("project_c", parseInt(id), params);
-      
       if (!response.success) {
         console.error(`Error fetching project with ID ${id}:`, response.message);
         throw new Error(response.message);

@@ -49,10 +49,9 @@ const fetchProjectDetails = async () => {
       setProject(projectData);
       setTasks(projectTasks);
 
-      // Fetch client details
-if (projectData.clientId_c) {
-const clientData = await clientService.getById(projectData.clientId_c);
-        setClient(clientData);
+// Extract client details from project data
+      if (projectData.clientId_c?.Name) {
+        setClient(projectData.clientId_c);
       }
 
       // Fetch time tracking data
