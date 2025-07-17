@@ -41,6 +41,11 @@ const Projects = () => {
   }, []);
 
 const handleEdit = (project) => {
+    // Prevent opening modal if data is still loading
+    if (loading || !clients) {
+      toast.warning("Please wait for data to load");
+      return;
+    }
     setEditingProject(project);
     setIsModalOpen(true);
   };
@@ -58,6 +63,11 @@ const handleEdit = (project) => {
   };
 
 const handleAddProject = () => {
+    // Prevent opening modal if data is still loading
+    if (loading || !clients) {
+      toast.warning("Please wait for data to load");
+      return;
+    }
     setEditingProject(null);
     setIsModalOpen(true);
   };
@@ -134,11 +144,11 @@ const handleAddProject = () => {
         </motion.div>
       )}
 
-      <ProjectModal
+<ProjectModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         project={editingProject}
-        clients={clients}
+        clients={clients || []}
         onProjectSaved={(project) => {
           if (editingProject) {
             setProjects(prev => prev.map(p => p.Id === project.Id ? project : p));

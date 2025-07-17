@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
 import Modal from "@/components/atoms/Modal";
-import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
 import Label from "@/components/atoms/Label";
-import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
 import projectService from "@/services/api/projectService";
 
-const ProjectModal = ({ isOpen, onClose, project, clients, onProjectSaved }) => {
+const ProjectModal = ({ isOpen, onClose, project, clients = [], onProjectSaved }) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -177,7 +177,7 @@ const ProjectModal = ({ isOpen, onClose, project, clients, onProjectSaved }) => 
             {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
           </div>
 
-          <div>
+<div>
             <Label htmlFor="clientId">Client *</Label>
             <select
               id="clientId"
@@ -186,9 +186,9 @@ const ProjectModal = ({ isOpen, onClose, project, clients, onProjectSaved }) => 
               className={`flex h-11 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 ${errors.clientId ? "border-red-500" : ""}`}
             >
               <option value="">Select a client</option>
-              {clients.map(client => (
-                <option key={client.Id} value={client.Id}>
-                  {client.name} - {client.company}
+              {(clients || []).map(client => (
+                <option key={client?.Id || Math.random()} value={client?.Id || ''}>
+                  {client?.name || 'Unknown'} - {client?.company || 'Unknown Company'}
                 </option>
               ))}
             </select>
