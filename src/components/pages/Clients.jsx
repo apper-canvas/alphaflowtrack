@@ -5,6 +5,7 @@ import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
 import ClientTable from "@/components/organisms/ClientTable";
+import ClientModal from "@/components/organisms/ClientModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
@@ -15,6 +16,7 @@ const Clients = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadClients = async () => {
     try {
@@ -49,8 +51,16 @@ const Clients = () => {
     }
   };
 
-  const handleAddClient = () => {
-    toast.info("Add new client functionality");
+const handleAddClient = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleClientCreated = (newClient) => {
+    setClients(prev => [...prev, newClient]);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   const filteredClients = clients.filter(client =>
@@ -123,7 +133,13 @@ const Clients = () => {
             onDelete={handleDelete}
           />
         </motion.div>
-      )}
+)}
+      
+      <ClientModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onClientCreated={handleClientCreated}
+      />
     </div>
   );
 };
