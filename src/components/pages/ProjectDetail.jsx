@@ -369,12 +369,11 @@ const remaining = project.budget_c - actualSpend;
               </span>
             </div>
           </div>
-        </motion.div>
-      </div>
 </motion.div>
       </div>
 
       {/* Time Tracking Section */}
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
