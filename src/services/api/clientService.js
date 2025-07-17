@@ -63,18 +63,18 @@ class ClientService {
       
       const response = await this.getApperClient().getRecordById("client_c", parseInt(id), params);
       
-      if (!response.success) {
-        console.error(`Error fetching client with ID ${id}:`, response.message);
+if (!response.success) {
+        console.error("Error fetching client with ID " + id + ":", response.message);
         throw new Error(response.message);
       }
       
       return response.data;
-    } catch (error) {
+} catch (error) {
       if (error?.response?.data?.message) {
-        console.error(`Error fetching client with ID ${id}:`, error?.response?.data?.message);
+        console.error("Error fetching client with ID " + id + ":", error?.response?.data?.message);
         throw new Error(error.response.data.message);
       } else {
-        console.error(`Error fetching client with ID ${id}:`, error.message);
+        console.error("Error fetching client with ID " + id + ":", error.message);
         throw error;
       }
     }
@@ -140,7 +140,7 @@ class ClientService {
       const response = await this.getApperClient().updateRecord("client_c", params);
       
       if (!response.success) {
-        console.error(`Error updating client with ID ${id}:`, response.message);
+console.error("Error updating client with ID " + id + ":", response.message);
         throw new Error(response.message);
       }
       
@@ -159,10 +159,10 @@ class ClientService {
       throw new Error("Unexpected response format");
     } catch (error) {
       if (error?.response?.data?.message) {
-        console.error(`Error updating client with ID ${id}:`, error?.response?.data?.message);
+console.error("Error updating client with ID " + id + ":", error?.response?.data?.message);
         throw new Error(error.response.data.message);
       } else {
-        console.error(`Error updating client with ID ${id}:`, error.message);
+        console.error("Error updating client with ID " + id + ":", error.message);
         throw error;
       }
     }
@@ -178,7 +178,7 @@ class ClientService {
       const response = await this.getApperClient().deleteRecord("client_c", params);
       
       if (!response.success) {
-        console.error(`Error deleting client with ID ${id}:`, response.message);
+console.error("Error deleting client with ID " + id + ":", response.message);
         throw new Error(response.message);
       }
       
@@ -197,10 +197,10 @@ class ClientService {
       return true;
     } catch (error) {
       if (error?.response?.data?.message) {
-        console.error(`Error deleting client with ID ${id}:`, error?.response?.data?.message);
+console.error("Error deleting client with ID " + id + ":", error?.response?.data?.message);
         throw new Error(error.response.data.message);
       } else {
-        console.error(`Error deleting client with ID ${id}:`, error.message);
+        console.error("Error deleting client with ID " + id + ":", error.message);
         throw error;
       }
     }
