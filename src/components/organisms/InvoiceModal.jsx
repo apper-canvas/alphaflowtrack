@@ -8,9 +8,10 @@ import Button from "@/components/atoms/Button";
 import invoiceService from "@/services/api/invoiceService";
 import projectService from "@/services/api/projectService";
 const InvoiceModal = ({ isOpen, onClose, clients, projects, onInvoiceCreated, onInvoiceUpdated, invoice }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     clientId: '',
     projectId: '',
+    status: 'Draft',
     dueDate: '',
     items: [{ description: '', amount: 0 }]
   });
@@ -20,11 +21,12 @@ const InvoiceModal = ({ isOpen, onClose, clients, projects, onInvoiceCreated, on
   const [projectLoading, setProjectLoading] = useState(false);
   const [projectError, setProjectError] = useState('');
   // Set form data when editing
-  React.useEffect(() => {
+React.useEffect(() => {
     if (invoice) {
       setFormData({
         clientId: invoice.clientId_c || '',
         projectId: invoice.projectId_c || '',
+        status: invoice.status_c || 'Draft',
         dueDate: invoice.dueDate_c ? new Date(invoice.dueDate_c).toISOString().split('T')[0] : '',
         items: invoice.items_c ? JSON.parse(invoice.items_c) : [{ description: '', amount: 0 }]
       });
@@ -105,7 +107,7 @@ const handleInputChange = async (field, value) => {
     return formData.items.reduce((sum, item) => sum + item.amount, 0);
   };
 
-  const validateForm = () => {
+const validateForm = () => {
     const newErrors = {};
     
     if (!formData.clientId) {
@@ -114,6 +116,10 @@ const handleInputChange = async (field, value) => {
     
     if (!formData.projectId) {
       newErrors.projectId = 'Project is required';
+    }
+    
+    if (!formData.status) {
+      newErrors.status = 'Status is required';
     }
     
     if (!formData.dueDate) {
@@ -144,11 +150,11 @@ const handleSubmit = async (e) => {
     setLoading(true);
     
     try {
-      const invoiceData = {
+const invoiceData = {
         clientId: parseInt(formData.clientId),
         projectId: parseInt(formData.projectId),
         amount: calculateTotal(),
-        status: 'Draft',
+        status: formData.status,
         dueDate: new Date(formData.dueDate).toISOString(),
         items: formData.items
       };
@@ -171,10 +177,11 @@ const handleSubmit = async (e) => {
     }
   };
 
-  const handleClose = () => {
+const handleClose = () => {
     setFormData({
       clientId: '',
       projectId: '',
+      status: 'Draft',
       dueDate: '',
       items: [{ description: '', amount: 0 }]
     });
@@ -232,19 +239,40 @@ className="mt-1 block w-full rounded-md border border-slate-300 dark:border-slat
                     {projectError}
                 </p>}
             </div>
+</div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <Label htmlFor="status">Status *</Label>
+                <select
+                    id="status"
+                    value={formData.status}
+                    onChange={e => handleInputChange("status", e.target.value)}
+                    className="mt-1 block w-full rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+                    <option value="Draft">Draft</option>
+                    <option value="Sent">Sent</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Overdue">Overdue</option>
+                </select>
+                {errors.status && <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.status}
+                </p>}
+            </div>
+            
+            <div>
+                <Label htmlFor="dueDate">Due Date *</Label>
+                <Input
+                    id="dueDate"
+                    type="date"
+                    value={formData.dueDate}
+                    onChange={e => handleInputChange("dueDate", e.target.value)}
+                    className="mt-1" />
+                {errors.dueDate && <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.dueDate}
+                </p>}
+            </div>
         </div>
-        <div>
-            <Label htmlFor="dueDate">Due Date *</Label>
-            <Input
-                id="dueDate"
-                type="date"
-                value={formData.dueDate}
-                onChange={e => handleInputChange("dueDate", e.target.value)}
-                className="mt-1" />
-            {errors.dueDate && <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {errors.dueDate}
-            </p>}
-        </div>
+        
         <div>
             <div className="flex items-center justify-between mb-4">
                 <Label>Line Items *</Label>
