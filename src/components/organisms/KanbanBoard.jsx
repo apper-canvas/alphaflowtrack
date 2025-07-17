@@ -86,12 +86,12 @@ return tasks.filter(task => task.status_c === status);
                     }`}
                   >
                     {columnTasks.map((task, index) => (
-                      <Draggable key={task.Id} draggableId={task.Id.toString()} index={index}>
+<Draggable key={task.Id} draggableId={task.Id.toString()} index={index}>
                         {(provided, snapshot) => (
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-{...provided.dragHandleProps}
+                            {...provided.dragHandleProps}
                             className={`transition-all duration-200 ${
                               snapshot.isDragging ? "rotate-2 scale-105" : ""
                             }`}
@@ -104,6 +104,7 @@ return tasks.filter(task => task.status_c === status);
                               onView={(task) => onEdit && onEdit(task)}
                               isDragging={snapshot.isDragging}
                             />
+                          </div>
                         )}
                       </Draggable>
                     ))}
