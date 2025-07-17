@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 1,
+    "clientId": 1,
+    "projectId": 3,
+    "amount": 5000,
+    "status": "Paid",
+    "dueDate": "2024-04-15T23:59:59Z",
+    "items": [
+      {
+        "description": "API Integration Development",
+        "hours": 40,
+        "rate": 125,
+        "amount": 5000
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "clientId": 2,
+    "projectId": 2,
+    "amount": 3500,
+    "status": "Sent",
+    "dueDate": "2024-04-20T23:59:59Z",
+    "items": [
+      {
+        "description": "Website Redesign - Phase 1",
+        "hours": 28,
+        "rate": 125,
+        "amount": 3500
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "clientId": 1,
+    "projectId": 1,
+    "amount": 7500,
+    "status": "Draft",
+    "dueDate": "2024-05-01T23:59:59Z",
+    "items": [
+      {
+        "description": "Mobile App Development - Milestone 2",
+        "hours": 60,
+        "rate": 125,
+        "amount": 7500
+      }
+    ]
+  },
+  {
+    "Id": 4,
+    "clientId": 4,
+    "projectId": 5,
+    "amount": 4800,
+    "status": "Sent",
+    "dueDate": "2024-04-25T23:59:59Z",
+    "items": [
+      {
+        "description": "Analytics Dashboard - Phase 1",
+        "hours": 32,
+        "rate": 150,
+        "amount": 4800
+      }
+    ]
+  },
+  {
+    "Id": 5,
+    "clientId": 3,
+    "projectId": 4,
+    "amount": 2500,
+    "status": "Overdue",
+    "dueDate": "2024-03-15T23:59:59Z",
+    "items": [
+      {
+        "description": "E-commerce Platform Planning",
+        "hours": 20,
+        "rate": 125,
+        "amount": 2500
+      }
+    ]
+  }
+]

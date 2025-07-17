@@ -1,0 +1,64 @@
+@import 'react-toastify/dist/ReactToastify.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-family: 'Inter', sans-serif;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply backdrop-blur-xl bg-white/10 dark:bg-slate-800/20 border border-white/20 dark:border-slate-700/50;
+  }
+  
+  .glass-card {
+    @apply backdrop-blur-lg bg-white/80 dark:bg-slate-800/80 border border-white/30 dark:border-slate-700/50 shadow-xl;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500 bg-clip-text text-transparent;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-200 hover:scale-102 hover:shadow-2xl;
+  }
+}
+
+/* Toast customization */
+.Toastify__toast-container {
+  @apply text-sm;
+}
+
+.Toastify__toast {
+  @apply rounded-xl backdrop-blur-lg bg-white/90 dark:bg-slate-800/90 border border-white/30 dark:border-slate-700/50 shadow-2xl;
+  min-height: 60px !important;
+}
+
+.Toastify__toast--success {
+  @apply bg-emerald-50/90 dark:bg-emerald-900/90 border-emerald-200/50 dark:border-emerald-700/50;
+}
+
+.Toastify__toast--error {
+  @apply bg-red-50/90 dark:bg-red-900/90 border-red-200/50 dark:border-red-700/50;
+}
+
+.Toastify__toast--warning {
+  @apply bg-amber-50/90 dark:bg-amber-900/90 border-amber-200/50 dark:border-amber-700/50;
+}
+
+.Toastify__toast--info {
+  @apply bg-blue-50/90 dark:bg-blue-900/90 border-blue-200/50 dark:border-blue-700/50;
+}

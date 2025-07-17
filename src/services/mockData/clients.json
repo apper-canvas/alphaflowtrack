@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "name": "Sarah Johnson",
+    "email": "sarah@techstartup.com",
+    "company": "TechStartup Inc",
+    "phone": "+1 (555) 123-4567",
+    "createdAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Michael Chen",
+    "email": "m.chen@designagency.com",
+    "company": "Creative Design Agency",
+    "phone": "+1 (555) 234-5678",
+    "createdAt": "2024-01-20T14:30:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Emily Rodriguez",
+    "email": "emily@ecommerce.shop",
+    "company": "E-Commerce Solutions",
+    "phone": "+1 (555) 345-6789",
+    "createdAt": "2024-02-01T09:15:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "David Thompson",
+    "email": "david@consulting.pro",
+    "company": "Business Consulting Pro",
+    "phone": "+1 (555) 456-7890",
+    "createdAt": "2024-02-10T16:45:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "Lisa Park",
+    "email": "lisa@healthtech.io",
+    "company": "HealthTech Solutions",
+    "phone": "+1 (555) 567-8901",
+    "createdAt": "2024-02-15T11:20:00Z"
+  }
+]

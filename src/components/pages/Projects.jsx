@@ -1,0 +1,137 @@
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import SearchBar from "@/components/molecules/SearchBar";
+import ProjectGrid from "@/components/organisms/ProjectGrid";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
+import projectService from "@/services/api/projectService";
+import clientService from "@/services/api/clientService";
+
+const Projects = () => {
+  const [projects, setProjects] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const [projectsData, clientsData] = await Promise.all([
+        projectService.getAll(),
+        clientService.getAll()
+      ]);
+      setProjects(projectsData);
+      setClients(clientsData);
+    } catch (err) {
+      setError(err.message || "Failed to load projects");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleEdit = (project) => {
+    toast.info(`Edit project: ${project.name}`);
+  };
+
+  const handleDelete = async (project) => {
+    if (window.confirm(`Are you sure you want to delete ${project.name}?`)) {
+      try {
+        await projectService.delete(project.Id);
+        setProjects(prev => prev.filter(p => p.Id !== project.Id));
+        toast.success("Project deleted successfully");
+      } catch (err) {
+        toast.error("Failed to delete project");
+      }
+    }
+  };
+
+  const handleAddProject = () => {
+    toast.info("Add new project functionality");
+  };
+
+  const filteredProjects = projects.filter(project =>
+    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return <Loading type="grid" />;
+  }
+
+  if (error) {
+    return <Error message={error} onRetry={loadData} />;
+  }
+
+  return (
+    <div className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-3xl font-bold gradient-text">Projects</h1>
+          <p className="text-slate-600 dark:text-slate-400">
+            Track progress and manage your project portfolio
+          </p>
+        </div>
+        <Button onClick={handleAddProject} className="w-full sm:w-auto">
+          <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+          New Project
+        </Button>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <SearchBar
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Search projects by name or status..."
+          className="max-w-md"
+        />
+      </motion.div>
+
+      {filteredProjects.length === 0 ? (
+        <Empty
+          icon="FolderOpen"
+          title="No projects found"
+          description={
+            searchTerm
+              ? "No projects match your search criteria. Try adjusting your search terms."
+              : "Create your first project to start tracking progress and deliverables."
+          }
+          actionLabel="New Project"
+          onAction={handleAddProject}
+        />
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <ProjectGrid
+            projects={filteredProjects}
+            clients={clients}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+export default Projects;

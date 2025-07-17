@@ -1,0 +1,62 @@
+[
+  {
+    "Id": 1,
+    "clientId": 1,
+    "name": "Mobile App Development",
+    "status": "In Progress",
+    "progress": 75,
+    "deadline": "2024-04-30T23:59:59Z",
+    "budget": 15000,
+    "createdAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "clientId": 2,
+    "name": "Website Redesign",
+    "status": "In Progress",
+    "progress": 45,
+    "deadline": "2024-04-15T23:59:59Z",
+    "budget": 8500,
+    "createdAt": "2024-01-20T14:30:00Z"
+  },
+  {
+    "Id": 3,
+    "clientId": 1,
+    "name": "API Integration",
+    "status": "Completed",
+    "progress": 100,
+    "deadline": "2024-03-20T23:59:59Z",
+    "budget": 5000,
+    "createdAt": "2024-01-25T08:00:00Z"
+  },
+  {
+    "Id": 4,
+    "clientId": 3,
+    "name": "E-commerce Platform",
+    "status": "Planning",
+    "progress": 15,
+    "deadline": "2024-06-30T23:59:59Z",
+    "budget": 25000,
+    "createdAt": "2024-02-01T09:15:00Z"
+  },
+  {
+    "Id": 5,
+    "clientId": 4,
+    "name": "Analytics Dashboard",
+    "status": "In Progress",
+    "progress": 60,
+    "deadline": "2024-05-15T23:59:59Z",
+    "budget": 12000,
+    "createdAt": "2024-02-10T16:45:00Z"
+  },
+  {
+    "Id": 6,
+    "clientId": 5,
+    "name": "Patient Portal",
+    "status": "Planning",
+    "progress": 25,
+    "deadline": "2024-07-20T23:59:59Z",
+    "budget": 18000,
+    "createdAt": "2024-02-15T11:20:00Z"
+  }
+]

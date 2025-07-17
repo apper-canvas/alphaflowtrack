@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1,
+    "projectId": 1,
+    "title": "Design user interface mockups",
+    "status": "Completed",
+    "priority": "High",
+    "dueDate": "2024-03-15T23:59:59Z",
+    "assignedTo": "Designer"
+  },
+  {
+    "Id": 2,
+    "projectId": 1,
+    "title": "Implement authentication system",
+    "status": "In Progress",
+    "priority": "High",
+    "dueDate": "2024-03-25T23:59:59Z",
+    "assignedTo": "Developer"
+  },
+  {
+    "Id": 3,
+    "projectId": 2,
+    "title": "Content strategy planning",
+    "status": "Completed",
+    "priority": "Medium",
+    "dueDate": "2024-03-10T23:59:59Z",
+    "assignedTo": "Content Writer"
+  },
+  {
+    "Id": 4,
+    "projectId": 2,
+    "title": "Homepage layout design",
+    "status": "In Progress",
+    "priority": "High",
+    "dueDate": "2024-03-30T23:59:59Z",
+    "assignedTo": "Designer"
+  },
+  {
+    "Id": 5,
+    "projectId": 4,
+    "title": "Requirements gathering",
+    "status": "In Progress",
+    "priority": "High",
+    "dueDate": "2024-03-20T23:59:59Z",
+    "assignedTo": "Project Manager"
+  },
+  {
+    "Id": 6,
+    "projectId": 5,
+    "title": "Database schema design",
+    "status": "Completed",
+    "priority": "High",
+    "dueDate": "2024-03-05T23:59:59Z",
+    "assignedTo": "Developer"
+  },
+  {
+    "Id": 7,
+    "projectId": 5,
+    "title": "Chart component development",
+    "status": "In Progress",
+    "priority": "Medium",
+    "dueDate": "2024-04-01T23:59:59Z",
+    "assignedTo": "Developer"
+  },
+  {
+    "Id": 8,
+    "projectId": 6,
+    "title": "Security compliance review",
+    "status": "Pending",
+    "priority": "High",
+    "dueDate": "2024-04-10T23:59:59Z",
+    "assignedTo": "Security Specialist"
+  }
+]
