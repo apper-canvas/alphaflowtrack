@@ -11,13 +11,13 @@ const InvoiceTable = ({ invoices, clients, projects, onEdit, onDelete, onMarkAsS
   }
 
   const getClientName = (clientId) => {
-    const client = clients?.find(c => c.Id === clientId);
-    return client?.name || "Unknown Client";
+const client = clients?.find(c => c.Id === clientId);
+    return client?.Name || "Unknown Client";
   };
 
   const getProjectName = (projectId) => {
-    const project = projects?.find(p => p.Id === projectId);
-    return project?.name || "Unknown Project";
+const project = projects?.find(p => p.Id === projectId);
+    return project?.Name || "Unknown Project";
   };
 
   const getStatusVariant = (status) => {
@@ -82,32 +82,32 @@ const InvoiceTable = ({ invoices, clients, projects, onEdit, onDelete, onMarkAsS
                 </td>
                 <td className="p-4">
                   <div className="font-medium text-slate-900 dark:text-slate-100">
-                    {getClientName(invoice.clientId)}
+{getClientName(invoice.clientId_c)}
                   </div>
                 </td>
                 <td className="p-4">
                   <div className="text-slate-700 dark:text-slate-300">
-                    {getProjectName(invoice.projectId)}
+{getProjectName(invoice.projectId_c)}
                   </div>
                 </td>
                 <td className="p-4">
                   <div className="font-semibold text-slate-900 dark:text-slate-100">
-                    ${invoice.amount?.toLocaleString()}
+${invoice.amount_c?.toLocaleString()}
                   </div>
                 </td>
                 <td className="p-4">
-                  <Badge variant={getStatusVariant(invoice.status)}>
-                    {invoice.status}
+<Badge variant={getStatusVariant(invoice.status_c)}>
+                    {invoice.status_c}
                   </Badge>
                 </td>
                 <td className="p-4">
                   <div className="text-slate-700 dark:text-slate-300">
-                    {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
+{format(new Date(invoice.dueDate_c), "MMM dd, yyyy")}
                   </div>
                 </td>
 <td className="p-4">
                   <div className="flex items-center justify-end space-x-2">
-                    {invoice.status === "Draft" && (
+{invoice.status_c === "Draft" && (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -118,7 +118,7 @@ const InvoiceTable = ({ invoices, clients, projects, onEdit, onDelete, onMarkAsS
                         <ApperIcon name="Send" className="h-4 w-4" />
                       </Button>
                     )}
-                    {invoice.status === "Sent" && (
+{invoice.status_c === "Sent" && (
                       <Button
                         variant="ghost"
                         size="sm"

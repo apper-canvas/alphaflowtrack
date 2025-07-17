@@ -20,16 +20,16 @@ const ProjectModal = ({ isOpen, onClose, project, clients = [], onProjectSaved }
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
     if (project) {
       setFormData({
-        name: project.name || "",
-        description: project.description || "",
-        clientId: project.clientId || "",
-        status: project.status || "Planning",
-        startDate: project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : "",
-        endDate: project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : "",
-        budget: project.budget || ""
+        name: project.Name || "",
+        description: project.description_c || "",
+        clientId: project.clientId_c || "",
+        status: project.status_c || "Planning",
+        startDate: project.startDate_c ? new Date(project.startDate_c).toISOString().split('T')[0] : "",
+        endDate: project.endDate_c ? new Date(project.endDate_c).toISOString().split('T')[0] : "",
+        budget: project.budget_c || ""
       });
     } else {
       setFormData({
@@ -102,7 +102,7 @@ const ProjectModal = ({ isOpen, onClose, project, clients = [], onProjectSaved }
 
     setIsSubmitting(true);
 
-    try {
+try {
       const projectData = {
         name: formData.name.trim(),
         description: formData.description.trim(),
@@ -111,7 +111,7 @@ const ProjectModal = ({ isOpen, onClose, project, clients = [], onProjectSaved }
         startDate: new Date(formData.startDate).toISOString(),
         endDate: new Date(formData.endDate).toISOString(),
         budget: parseFloat(formData.budget),
-        progress: project ? project.progress : 0,
+        progress: project ? project.progress_c : 0,
         deadline: new Date(formData.endDate).toISOString()
       };
 
@@ -188,7 +188,7 @@ const ProjectModal = ({ isOpen, onClose, project, clients = [], onProjectSaved }
               <option value="">Select a client</option>
               {(clients || []).map(client => (
                 <option key={client?.Id || Math.random()} value={client?.Id || ''}>
-                  {client?.name || 'Unknown'} - {client?.company || 'Unknown Company'}
+                  {client?.Name || 'Unknown'} - {client?.company_c || 'Unknown Company'}
                 </option>
               ))}
             </select>

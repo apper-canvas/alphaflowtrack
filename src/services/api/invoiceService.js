@@ -1,98 +1,305 @@
-import invoicesData from "@/services/mockData/invoices.json";
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class InvoiceService {
   constructor() {
-    this.invoices = [...invoicesData];
+    this.apperClient = null;
+  }
+
+  getApperClient() {
+    if (!this.apperClient) {
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+    }
+    return this.apperClient;
   }
 
   async getAll() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([...this.invoices]);
-      }, 300);
-    });
+    try {
+      await delay(300);
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "amount_c" } },
+          { field: { Name: "status_c" } },
+          { field: { Name: "dueDate_c" } },
+          { field: { Name: "items_c" } },
+          { field: { Name: "clientId_c" } },
+          { field: { Name: "projectId_c" } }
+        ]
+      };
+      
+      const response = await this.getApperClient().fetchRecords("app_invoice_c", params);
+      
+      if (!response.success) {
+        console.error("Error fetching invoices:", response.message);
+        throw new Error(response.message);
+      }
+      
+      return response.data || [];
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching invoices:", error?.response?.data?.message);
+        throw new Error(error.response.data.message);
+      } else {
+        console.error("Error fetching invoices:", error.message);
+        throw error;
+      }
+    }
   }
 
   async getById(id) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const invoice = this.invoices.find(i => i.Id === parseInt(id));
-        if (invoice) {
-          resolve({ ...invoice });
-        } else {
-          reject(new Error("Invoice not found"));
-        }
-      }, 200);
-    });
+    try {
+      await delay(200);
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "amount_c" } },
+          { field: { Name: "status_c" } },
+          { field: { Name: "dueDate_c" } },
+          { field: { Name: "items_c" } },
+          { field: { Name: "clientId_c" } },
+          { field: { Name: "projectId_c" } }
+        ]
+      };
+      
+      const response = await this.getApperClient().getRecordById("app_invoice_c", parseInt(id), params);
+      
+      if (!response.success) {
+        console.error(`Error fetching invoice with ID ${id}:`, response.message);
+        throw new Error(response.message);
+      }
+      
+      return response.data;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching invoice with ID ${id}:`, error?.response?.data?.message);
+        throw new Error(error.response.data.message);
+      } else {
+        console.error(`Error fetching invoice with ID ${id}:`, error.message);
+        throw error;
+      }
+    }
   }
 
   async getByClientId(clientId) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const clientInvoices = this.invoices.filter(i => i.clientId === parseInt(clientId));
-        resolve([...clientInvoices]);
-      }, 250);
-    });
+    try {
+      await delay(250);
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "amount_c" } },
+          { field: { Name: "status_c" } },
+          { field: { Name: "dueDate_c" } },
+          { field: { Name: "items_c" } },
+          { field: { Name: "clientId_c" } },
+          { field: { Name: "projectId_c" } }
+        ],
+        where: [
+          {
+            FieldName: "clientId_c",
+            Operator: "EqualTo",
+            Values: [parseInt(clientId)]
+          }
+        ]
+      };
+      
+      const response = await this.getApperClient().fetchRecords("app_invoice_c", params);
+      
+      if (!response.success) {
+        console.error(`Error fetching invoices for client ${clientId}:`, response.message);
+        throw new Error(response.message);
+      }
+      
+      return response.data || [];
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching invoices for client ${clientId}:`, error?.response?.data?.message);
+        throw new Error(error.response.data.message);
+      } else {
+        console.error(`Error fetching invoices for client ${clientId}:`, error.message);
+        throw error;
+      }
+    }
   }
 
   async create(invoiceData) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newId = Math.max(...this.invoices.map(i => i.Id)) + 1;
-        const newInvoice = {
-          Id: newId,
-          ...invoiceData
-        };
-        this.invoices.push(newInvoice);
-        resolve({ ...newInvoice });
-      }, 300);
-    });
+    try {
+      await delay(300);
+      const params = {
+        records: [{
+          Name: `INV-${Date.now()}`,
+          amount_c: invoiceData.amount,
+          status_c: invoiceData.status,
+          dueDate_c: invoiceData.dueDate,
+          items_c: JSON.stringify(invoiceData.items),
+          clientId_c: parseInt(invoiceData.clientId),
+          projectId_c: parseInt(invoiceData.projectId)
+        }]
+      };
+      
+      const response = await this.getApperClient().createRecord("app_invoice_c", params);
+      
+      if (!response.success) {
+        console.error("Error creating invoice:", response.message);
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          throw new Error("Failed to create invoice");
+        }
+        
+        return successfulRecords[0]?.data;
+      }
+      
+      throw new Error("Unexpected response format");
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating invoice:", error?.response?.data?.message);
+        throw new Error(error.response.data.message);
+      } else {
+        console.error("Error creating invoice:", error.message);
+        throw error;
+      }
+    }
   }
 
-async update(id, invoiceData) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = this.invoices.findIndex(i => i.Id === parseInt(id));
-        if (index !== -1) {
-          this.invoices[index] = { ...this.invoices[index], ...invoiceData };
-          resolve({ ...this.invoices[index] });
-        } else {
-          reject(new Error("Invoice not found"));
+  async update(id, invoiceData) {
+    try {
+      await delay(300);
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: invoiceData.name,
+          amount_c: invoiceData.amount,
+          status_c: invoiceData.status,
+          dueDate_c: invoiceData.dueDate,
+          items_c: JSON.stringify(invoiceData.items),
+          clientId_c: parseInt(invoiceData.clientId),
+          projectId_c: parseInt(invoiceData.projectId)
+        }]
+      };
+      
+      const response = await this.getApperClient().updateRecord("app_invoice_c", params);
+      
+      if (!response.success) {
+        console.error(`Error updating invoice with ID ${id}:`, response.message);
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          throw new Error("Failed to update invoice");
         }
-      }, 300);
-    });
+        
+        return successfulRecords[0]?.data;
+      }
+      
+      throw new Error("Unexpected response format");
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error updating invoice with ID ${id}:`, error?.response?.data?.message);
+        throw new Error(error.response.data.message);
+      } else {
+        console.error(`Error updating invoice with ID ${id}:`, error.message);
+        throw error;
+      }
+    }
   }
 
   async updateStatus(id, status, paymentDate = null) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = this.invoices.findIndex(i => i.Id === parseInt(id));
-        if (index !== -1) {
-          const updateData = { status };
-          if (paymentDate) {
-            updateData.paymentDate = new Date(paymentDate).toISOString();
-          }
-          this.invoices[index] = { ...this.invoices[index], ...updateData };
-          resolve({ ...this.invoices[index] });
-        } else {
-          reject(new Error("Invoice not found"));
+    try {
+      await delay(300);
+      const updateData = { status_c: status };
+      if (paymentDate) {
+        updateData.paymentDate = new Date(paymentDate).toISOString();
+      }
+      
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          ...updateData
+        }]
+      };
+      
+      const response = await this.getApperClient().updateRecord("app_invoice_c", params);
+      
+      if (!response.success) {
+        console.error(`Error updating invoice status with ID ${id}:`, response.message);
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          throw new Error("Failed to update invoice status");
         }
-      }, 300);
-    });
+        
+        return successfulRecords[0]?.data;
+      }
+      
+      throw new Error("Unexpected response format");
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error updating invoice status with ID ${id}:`, error?.response?.data?.message);
+        throw new Error(error.response.data.message);
+      } else {
+        console.error(`Error updating invoice status with ID ${id}:`, error.message);
+        throw error;
+      }
+    }
   }
 
   async delete(id) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = this.invoices.findIndex(i => i.Id === parseInt(id));
-        if (index !== -1) {
-          this.invoices.splice(index, 1);
-          resolve(true);
-        } else {
-          reject(new Error("Invoice not found"));
+    try {
+      await delay(300);
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+      
+      const response = await this.getApperClient().deleteRecord("app_invoice_c", params);
+      
+      if (!response.success) {
+        console.error(`Error deleting invoice with ID ${id}:`, response.message);
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const successfulDeletions = response.results.filter(result => result.success);
+        const failedDeletions = response.results.filter(result => !result.success);
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`);
+          throw new Error("Failed to delete invoice");
         }
-      }, 300);
-    });
+        
+        return successfulDeletions.length > 0;
+      }
+      
+      return true;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error deleting invoice with ID ${id}:`, error?.response?.data?.message);
+        throw new Error(error.response.data.message);
+      } else {
+        console.error(`Error deleting invoice with ID ${id}:`, error.message);
+        throw error;
+      }
+    }
   }
 }
 

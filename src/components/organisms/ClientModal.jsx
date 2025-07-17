@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import Modal from '@/components/atoms/Modal';
-import Button from '@/components/atoms/Button';
-import Input from '@/components/atoms/Input';
-import Label from '@/components/atoms/Label';
-import ApperIcon from '@/components/ApperIcon';
-import clientService from '@/services/api/clientService';
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Modal from "@/components/atoms/Modal";
+import Input from "@/components/atoms/Input";
+import Label from "@/components/atoms/Label";
+import Button from "@/components/atoms/Button";
+import clientService from "@/services/api/clientService";
 
-const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
+const ClientModal = ({ isOpen, onClose, onClientCreated, onClientUpdated, editingClient }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,9 +15,21 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
     phone: '',
     notes: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // Set form data when editing
+  React.useEffect(() => {
+    if (editingClient) {
+      setFormData({
+        name: editingClient.Name || '',
+        email: editingClient.email_c || '',
+        company: editingClient.company_c || '',
+        phone: editingClient.phone_c || '',
+        notes: editingClient.notes || ''
+      });
+    }
+  }, [editingClient]);
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
@@ -54,7 +66,7 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -64,13 +76,19 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
     setIsSubmitting(true);
     
     try {
-      const newClient = await clientService.create(formData);
-      toast.success('Client created successfully!');
-      onClientCreated(newClient);
+      if (editingClient) {
+        const updatedClient = await clientService.update(editingClient.Id, formData);
+        toast.success('Client updated successfully!');
+        onClientUpdated && onClientUpdated(updatedClient);
+      } else {
+        const newClient = await clientService.create(formData);
+        toast.success('Client created successfully!');
+        onClientCreated && onClientCreated(newClient);
+      }
       handleClose();
     } catch (error) {
-      toast.error('Failed to create client. Please try again.');
-      console.error('Error creating client:', error);
+      toast.error(editingClient ? 'Failed to update client. Please try again.' : 'Failed to create client. Please try again.');
+      console.error('Error with client:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -85,15 +103,14 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
       notes: ''
     });
     setErrors({});
-    setIsSubmitting(false);
     onClose();
   };
 
   return (
-    <Modal
+<Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Add New Client"
+      title={editingClient ? "Edit Client" : "Add New Client"}
       maxWidth="max-w-lg"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -190,15 +207,15 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
             disabled={isSubmitting}
             className="flex-1"
           >
-            {isSubmitting ? (
+{isSubmitting ? (
               <>
                 <ApperIcon name="Loader2" className="h-4 w-4 mr-2 animate-spin" />
-                Creating...
+                {editingClient ? "Updating..." : "Creating..."}
               </>
             ) : (
               <>
-                <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
-                Create Client
+                <ApperIcon name={editingClient ? "Save" : "Plus"} className="h-4 w-4 mr-2" />
+                {editingClient ? "Update Client" : "Create Client"}
               </>
             )}
           </Button>

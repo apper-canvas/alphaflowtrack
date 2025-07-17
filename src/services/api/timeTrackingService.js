@@ -30,7 +30,7 @@ class TimeTrackingService {
         resolve([...this.timeEntries]);
       }, 300);
     });
-  }
+}
 
   async startTimer(taskId) {
     return new Promise((resolve, reject) => {

@@ -50,8 +50,8 @@ const fetchProjectDetails = async () => {
       setTasks(projectTasks);
 
       // Fetch client details
-      if (projectData.clientId) {
-        const clientData = await clientService.getById(projectData.clientId);
+if (projectData.clientId_c) {
+const clientData = await clientService.getById(projectData.clientId_c);
         setClient(clientData);
       }
 
@@ -91,16 +91,16 @@ const fetchProjectDetails = async () => {
     return variants[status] || "default";
   };
 
-  const generateTimelineData = () => {
+const generateTimelineData = () => {
     if (!project) return { categories: [], series: [] };
 
-    const startDate = new Date(project.startDate || project.createdAt);
-    const endDate = new Date(project.deadline);
+    const startDate = new Date(project.startDate_c || project.createdAt_c);
+    const endDate = new Date(project.deadline_c);
     const today = new Date();
     
     const totalDays = differenceInDays(endDate, startDate);
     const elapsedDays = differenceInDays(today, startDate);
-    const progressDays = Math.floor((totalDays * project.progress) / 100);
+    const progressDays = Math.floor((totalDays * project.progress_c) / 100);
 
     return {
       categories: [
@@ -121,8 +121,8 @@ const fetchProjectDetails = async () => {
   const generateBudgetData = () => {
     if (!project) return { categories: [], series: [] };
 
-    const actualSpend = project.actualSpend || (project.budget * project.progress / 100);
-    const remaining = project.budget - actualSpend;
+const actualSpend = project.actualSpend_c || (project.budget_c * project.progress_c / 100);
+const remaining = project.budget_c - actualSpend;
 
     return {
       categories: ["Budget Allocation"],
@@ -243,11 +243,11 @@ const fetchProjectDetails = async () => {
             Back to Projects
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-              {project.name}
+<h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              {project.Name}
             </h1>
-            <p className="text-slate-500 dark:text-slate-400">
-              {client?.name || "Unknown Client"}
+<p className="text-slate-500 dark:text-slate-400">
+              {client?.Name || "Unknown Client"}
             </p>
           </div>
         </div>
@@ -268,29 +268,28 @@ const fetchProjectDetails = async () => {
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
               Project Status
             </h3>
-            <Badge variant={getStatusVariant(project.status)}>
-              {project.status}
+<Badge variant={getStatusVariant(project.status_c)}>
+              {project.status_c}
             </Badge>
           </div>
-          <div className="space-y-4">
+<div className="space-y-4">
             <div>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-slate-500 dark:text-slate-400">Progress</span>
-                <span className="font-medium">{project.progress}%</span>
+                <span className="font-medium">{project.progress_c}%</span>
               </div>
-              <ProgressBar value={project.progress} />
+              <ProgressBar value={project.progress_c} />
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-slate-500 dark:text-slate-400">Start Date</span>
-                <p className="font-medium text-slate-900 dark:text-slate-100">
-                  {format(new Date(project.startDate || project.createdAt), "MMM dd, yyyy")}
+<p className="font-medium text-slate-900 dark:text-slate-100">
+                  {format(new Date(project.startDate_c || project.createdAt_c), "MMM dd, yyyy")}
                 </p>
               </div>
               <div>
                 <span className="text-slate-500 dark:text-slate-400">Deadline</span>
-                <p className="font-medium text-slate-900 dark:text-slate-100">
-                  {format(new Date(project.deadline), "MMM dd, yyyy")}
+<p className="font-medium text-slate-900 dark:text-slate-100">
+                  {format(new Date(project.deadline_c), "MMM dd, yyyy")}
                 </p>
               </div>
             </div>
@@ -313,28 +312,27 @@ const fetchProjectDetails = async () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <span className="text-slate-500 dark:text-slate-400 text-sm">Total Budget</span>
-                <p className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                  ${project.budget?.toLocaleString()}
+<p className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                  ${project.budget_c?.toLocaleString()}
                 </p>
               </div>
               <div>
                 <span className="text-slate-500 dark:text-slate-400 text-sm">Spent</span>
-                <p className="text-xl font-bold text-primary-500">
-                  ${((project.actualSpend || (project.budget * project.progress / 100))).toLocaleString()}
+<p className="text-xl font-bold text-primary-500">
+                  ${((project.actualSpend_c || (project.budget_c * project.progress_c / 100))).toLocaleString()}
                 </p>
               </div>
             </div>
             <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-slate-400 text-sm">Remaining</span>
-                <span className="font-medium text-emerald-600">
-                  ${(project.budget - (project.actualSpend || (project.budget * project.progress / 100))).toLocaleString()}
+<span className="font-medium text-emerald-600">
+                  ${(project.budget_c - (project.actualSpend_c || (project.budget_c * project.progress_c / 100))).toLocaleString()}
                 </span>
               </div>
             </div>
-          </div>
-</motion.div>
-
+</div>
+        </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -352,30 +350,31 @@ const fetchProjectDetails = async () => {
               <span className="text-slate-500 dark:text-slate-400 text-sm">Total Tasks</span>
               <span className="font-medium">{tasks.length}</span>
             </div>
-            <div className="flex justify-between">
+<div className="flex justify-between">
               <span className="text-slate-500 dark:text-slate-400 text-sm">Completed</span>
               <span className="font-medium text-emerald-600">
-                {tasks.filter(t => t.status === 'Completed').length}
+                {tasks.filter(t => t.status_c === 'Completed').length}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500 dark:text-slate-400 text-sm">In Progress</span>
               <span className="font-medium text-amber-600">
-                {tasks.filter(t => t.status === 'In Progress').length}
+                {tasks.filter(t => t.status_c === 'In Progress').length}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500 dark:text-slate-400 text-sm">Pending</span>
               <span className="font-medium text-slate-500">
-                {tasks.filter(t => t.status === 'Pending').length}
+                {tasks.filter(t => t.status_c === 'Pending').length}
               </span>
             </div>
           </div>
         </motion.div>
       </div>
+</motion.div>
+      </div>
 
-{/* Time Tracking Section */}
-      <motion.div
+      {/* Time Tracking Section */}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -426,8 +425,8 @@ const fetchProjectDetails = async () => {
                 return (
                   <div key={entry.Id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                        {task?.title || "Unknown Task"}
+<p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        {task?.title_c || "Unknown Task"}
                       </p>
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         {format(new Date(entry.date), "MMM dd, yyyy")}
@@ -471,8 +470,8 @@ const fetchProjectDetails = async () => {
         />
       </motion.div>
 
-      {/* Budget Visualization */}
-<motion.div
+{/* Budget Visualization */}
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
@@ -512,9 +511,9 @@ const fetchProjectDetails = async () => {
           <KanbanBoard
             tasks={tasks}
             projects={[project]}
-            onEdit={(task) => toast.info(`Edit task: ${task.title}`)}
+onEdit={(task) => toast.info(`Edit task: ${task.title_c}`)}
             onDelete={async (task) => {
-              if (window.confirm(`Are you sure you want to delete "${task.title}"?`)) {
+if (window.confirm(`Are you sure you want to delete "${task.title_c}"?`)) {
                 try {
                   await taskService.delete(task.Id);
                   setTasks(prev => prev.filter(t => t.Id !== task.Id));
@@ -534,7 +533,7 @@ const fetchProjectDetails = async () => {
               const newStatus = destination.droppableId;
 
               try {
-                const updatedTask = await taskService.update(taskId, { status: newStatus });
+const updatedTask = await taskService.update(taskId, { status_c: newStatus });
                 setTasks(prev => prev.map(t => t.Id === taskId ? updatedTask : t));
                 toast.success(`Task moved to ${newStatus}`);
               } catch (err) {
@@ -549,8 +548,8 @@ const fetchProjectDetails = async () => {
         )}
       </motion.div>
 
-      {/* Project Description */}
-      {project.description && (
+{/* Project Description */}
+      {project.description_c && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -560,8 +559,8 @@ const fetchProjectDetails = async () => {
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
             Project Description
           </h3>
-          <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-            {project.description}
+<p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+            {project.description_c}
           </p>
         </motion.div>
       )}

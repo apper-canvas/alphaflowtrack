@@ -44,7 +44,7 @@ const handleEdit = (client) => {
   const handleDelete = async (client) => {
     if (window.confirm(`Are you sure you want to delete ${client.name}?`)) {
       try {
-        await clientService.delete(client.Id);
+await clientService.delete(client.Id);
         setClients(prev => prev.filter(c => c.Id !== client.Id));
         toast.success("Client deleted successfully");
       } catch (err) {
@@ -72,10 +72,10 @@ const handleClientCreated = (newClient) => {
     setEditingClient(null);
   };
 
-  const filteredClients = clients.filter(client =>
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.company.toLowerCase().includes(searchTerm.toLowerCase())
+const filteredClients = clients.filter(client =>
+    client.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.email_c.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.company_c.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {

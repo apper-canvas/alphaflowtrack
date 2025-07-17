@@ -45,11 +45,11 @@ const ProjectGrid = ({ projects, clients, onEdit, onDelete }) => {
         >
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
-                {project.name}
+<h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                {project.Name}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {getClientName(project.clientId)}
+{getClientName(project.clientId_c)}
               </p>
             </div>
 <div className="flex items-center space-x-2">
@@ -75,23 +75,23 @@ const ProjectGrid = ({ projects, clients, onEdit, onDelete }) => {
           </div>
 
           <div className="mb-4">
-            <Badge variant={getStatusVariant(project.status)} className="mb-3">
-              {project.status}
+<Badge variant={getStatusVariant(project.status_c)} className="mb-3">
+              {project.status_c}
             </Badge>
-            <ProgressBar value={project.progress} className="mb-3" />
+<ProgressBar value={project.progress_c} className="mb-3" />
           </div>
 
           <div className="space-y-2 mb-4">
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-500 dark:text-slate-400">Budget:</span>
-              <span className="font-medium text-slate-900 dark:text-slate-100">
-                ${project.budget?.toLocaleString()}
+<span className="font-medium text-slate-900 dark:text-slate-100">
+                ${project.budget_c?.toLocaleString()}
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-500 dark:text-slate-400">Deadline:</span>
-              <span className="font-medium text-slate-900 dark:text-slate-100">
-                {format(new Date(project.deadline), "MMM dd, yyyy")}
+<span className="font-medium text-slate-900 dark:text-slate-100">
+                {format(new Date(project.deadline_c), "MMM dd, yyyy")}
               </span>
             </div>
           </div>
@@ -102,7 +102,7 @@ const ProjectGrid = ({ projects, clients, onEdit, onDelete }) => {
             </div>
             <div className="flex-1">
               <div className="text-xs text-slate-500 dark:text-slate-400">
-                Created {format(new Date(project.createdAt), "MMM dd")}
+Created {format(new Date(project.createdAt_c), "MMM dd")}
               </div>
             </div>
           </div>

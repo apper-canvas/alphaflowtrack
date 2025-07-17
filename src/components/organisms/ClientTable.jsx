@@ -51,33 +51,33 @@ const ClientTable = ({ clients, onEdit, onDelete }) => {
                 <td className="p-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-white font-semibold text-sm">
-                        {client.name.split(" ").map(n => n[0]).join("")}
+<span className="text-white font-semibold text-sm">
+                        {client.Name.split(" ").map(n => n[0]).join("")}
                       </span>
                     </div>
                     <div>
-                      <div className="font-medium text-slate-900 dark:text-slate-100">
-                        {client.name}
+<div className="font-medium text-slate-900 dark:text-slate-100">
+                        {client.Name}
                       </div>
                       <div className="text-sm text-slate-500 dark:text-slate-400">
-                        {client.email}
+                        {client.email_c}
                       </div>
                     </div>
                   </div>
                 </td>
                 <td className="p-4">
-                  <div className="font-medium text-slate-900 dark:text-slate-100">
-                    {client.company}
+<div className="font-medium text-slate-900 dark:text-slate-100">
+                    {client.company_c}
                   </div>
                 </td>
                 <td className="p-4">
-                  <div className="text-slate-700 dark:text-slate-300">
-                    {client.phone}
+<div className="text-slate-700 dark:text-slate-300">
+                    {client.phone_c}
                   </div>
                 </td>
                 <td className="p-4">
-                  <div className="text-slate-700 dark:text-slate-300">
-                    {format(new Date(client.createdAt), "MMM dd, yyyy")}
+<div className="text-slate-700 dark:text-slate-300">
+                    {format(new Date(client.createdAt_c), "MMM dd, yyyy")}
                   </div>
                 </td>
                 <td className="p-4">

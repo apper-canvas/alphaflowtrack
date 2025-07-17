@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { AuthContext } from "@/App";
 import ApperIcon from "@/components/ApperIcon";
-import ThemeToggle from "@/components/molecules/ThemeToggle";
 import ProjectModal from "@/components/organisms/ProjectModal";
+import ThemeToggle from "@/components/molecules/ThemeToggle";
 import clientService from "@/services/api/clientService";
 
 const Header = ({ onMenuClick }) => {
@@ -63,16 +65,7 @@ const Header = ({ onMenuClick }) => {
           <ApperIcon name="Plus" className="h-4 w-4" />
           <span className="text-sm font-medium">New Project</span>
         </button>
-        
-<div className="hidden sm:flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full flex items-center justify-center shadow-lg">
-            <ApperIcon name="User" className="h-4 w-4 text-white" />
-          </div>
-          <div className="text-sm">
-            <div className="font-medium text-slate-700 dark:text-slate-200">John Doe</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400">Freelancer</div>
-          </div>
-</div>
+<UserSection />
       </div>
       
       <ProjectModal
@@ -83,6 +76,51 @@ const Header = ({ onMenuClick }) => {
         onProjectSaved={handleProjectCreated}
       />
     </motion.header>
+  );
+};
+
+const UserSection = () => {
+  const { logout } = useContext(AuthContext);
+  const { user } = useSelector((state) => state.user);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setShowDropdown(!showDropdown)}
+        className="hidden sm:flex items-center space-x-3 p-2 rounded-lg hover:bg-white/10 transition-colors"
+      >
+        <div className="w-8 h-8 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full flex items-center justify-center shadow-lg">
+          <ApperIcon name="User" className="h-4 w-4 text-white" />
+        </div>
+        <div className="text-sm">
+          <div className="font-medium text-slate-700 dark:text-slate-200">
+            {user?.firstName || 'User'} {user?.lastName || ''}
+          </div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">
+            {user?.emailAddress || 'user@example.com'}
+          </div>
+        </div>
+        <ApperIcon name="ChevronDown" className="h-4 w-4 text-slate-500" />
+      </button>
+
+      {showDropdown && (
+        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-50">
+          <div className="py-2">
+            <button
+              onClick={() => {
+                logout();
+                setShowDropdown(false);
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center"
+            >
+              <ApperIcon name="LogOut" className="h-4 w-4 mr-2" />
+              Sign out
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -61,7 +61,7 @@ const handleEdit = (task) => {
 
   const handleStatusChange = async (taskId, newStatus) => {
     try {
-      const updatedTask = await taskService.update(taskId, { status: newStatus });
+const updatedTask = await taskService.update(taskId, { status_c: newStatus });
       setTasks(prev => prev.map(t => t.Id === taskId ? updatedTask : t));
       toast.success(`Task marked as ${newStatus.toLowerCase()}`);
     } catch (err) {
@@ -102,7 +102,7 @@ const handleAddTask = () => {
     const newStatus = destination.droppableId;
 
     try {
-      const updatedTask = await taskService.update(taskId, { status: newStatus });
+const updatedTask = await taskService.update(taskId, { status_c: newStatus });
       setTasks(prev => prev.map(t => t.Id === taskId ? updatedTask : t));
       toast.success(`Task moved to ${newStatus}`);
     } catch (err) {
@@ -110,10 +110,10 @@ const handleAddTask = () => {
     }
   };
 
-  const filteredTasks = tasks.filter(task =>
-    task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    task.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    task.priority.toLowerCase().includes(searchTerm.toLowerCase())
+const filteredTasks = tasks.filter(task =>
+    task.title_c.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    task.status_c.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    task.priority_c.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {

@@ -65,21 +65,21 @@ const TaskList = ({ tasks, projects, onEdit, onDelete, onStatusChange }) => {
                     ? "line-through text-slate-500 dark:text-slate-400" 
                     : "text-slate-900 dark:text-slate-100"
                 }`}>
-                  {task.title}
+{task.title_c}
                 </div>
                 <div className="flex items-center space-x-4 text-sm text-slate-500 dark:text-slate-400">
-                  <span>{getProjectName(task.projectId)}</span>
+<span>{getProjectName(task.projectId_c)}</span>
                   <span>•</span>
-                  <span>Due {format(new Date(task.dueDate), "MMM dd")}</span>
+<span>Due {format(new Date(task.dueDate_c), "MMM dd")}</span>
                 </div>
               </div>
 
               <div className="flex items-center space-x-2">
-                <Badge variant={getStatusVariant(task.status)}>
-                  {task.status}
+<Badge variant={getStatusVariant(task.status_c)}>
+                  {task.status_c}
                 </Badge>
-                <Badge variant={getPriorityVariant(task.priority)}>
-                  {task.priority}
+<Badge variant={getPriorityVariant(task.priority_c)}>
+                  {task.priority_c}
                 </Badge>
               </div>
             </div>

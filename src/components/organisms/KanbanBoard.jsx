@@ -26,7 +26,7 @@ const KanbanBoard = ({ tasks, projects, onEdit, onDelete, onDragEnd }) => {
   ];
 
   const getTasksByStatus = (status) => {
-    return tasks.filter(task => task.status === status);
+return tasks.filter(task => task.status_c === status);
   };
 
   const getProjectName = (projectId) => {

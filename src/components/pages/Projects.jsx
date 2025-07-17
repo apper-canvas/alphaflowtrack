@@ -72,9 +72,9 @@ const handleAddProject = () => {
     setIsModalOpen(true);
   };
 
-  const filteredProjects = projects.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.status.toLowerCase().includes(searchTerm.toLowerCase())
+const filteredProjects = projects.filter(project =>
+    project.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.status_c.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {

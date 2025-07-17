@@ -69,8 +69,8 @@ const [loading, setLoading] = useState(true);
     if (window.confirm(`Mark invoice INV-${String(invoice.Id).padStart(4, "0")} as sent?`)) {
       try {
         await invoiceService.updateStatus(invoice.Id, "Sent");
-        setInvoices(prev => prev.map(i => 
-          i.Id === invoice.Id ? { ...i, status: "Sent" } : i
+setInvoices(prev => prev.map(i => 
+          i.Id === invoice.Id ? { ...i, status_c: "Sent" } : i
         ));
         toast.success("Invoice marked as sent");
       } catch (err) {
@@ -87,9 +87,9 @@ const [loading, setLoading] = useState(true);
   const handleConfirmPayment = async (paymentDate) => {
     try {
       await invoiceService.updateStatus(selectedInvoice.Id, "Paid", paymentDate);
-      setInvoices(prev => prev.map(i => 
+setInvoices(prev => prev.map(i => 
         i.Id === selectedInvoice.Id 
-          ? { ...i, status: "Paid", paymentDate: new Date(paymentDate).toISOString() }
+          ? { ...i, status_c: "Paid", paymentDate: new Date(paymentDate).toISOString() }
           : i
       ));
       toast.success("Invoice marked as paid");
@@ -114,23 +114,23 @@ const handleInvoiceCreated = () => {
 setEditingInvoice(null);
   };
   
-  const filteredInvoices = invoices.filter(invoice => {
-    const client = clients.find(c => c.Id === invoice.clientId);
-    const project = projects.find(p => p.Id === invoice.projectId);
+const filteredInvoices = invoices.filter(invoice => {
+    const client = clients.find(c => c.Id === invoice.clientId_c);
+    const project = projects.find(p => p.Id === invoice.projectId_c);
     const searchLower = searchTerm.toLowerCase();
     
     return (
       String(invoice.Id).padStart(4, "0").includes(searchLower) ||
-      invoice.status.toLowerCase().includes(searchLower) ||
-      client?.name.toLowerCase().includes(searchLower) ||
-      project?.name.toLowerCase().includes(searchLower)
+      invoice.status_c.toLowerCase().includes(searchLower) ||
+      client?.Name.toLowerCase().includes(searchLower) ||
+      project?.Name.toLowerCase().includes(searchLower)
 );
   });
 
   const calculateOutstandingAmount = () => {
-    return invoices
-      .filter(invoice => invoice.status !== "Paid")
-.reduce((total, invoice) => total + invoice.amount, 0);
+return invoices
+      .filter(invoice => invoice.status_c !== "Paid")
+.reduce((total, invoice) => total + invoice.amount_c, 0);
   };
 
   if (loading) {
@@ -175,11 +175,11 @@ if (error) {
             </p>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-bold text-red-600 dark:text-red-400">
+<div className="text-3xl font-bold text-red-600 dark:text-red-400">
               ${calculateOutstandingAmount().toLocaleString()}
             </div>
-            <div className="text-sm text-slate-500 dark:text-slate-400">
-              {invoices.filter(i => i.status !== "Paid").length} unpaid invoices
+            <div className="text-sm text-slate-600 dark:text-slate-400">
+              {invoices.filter(i => i.status_c !== "Paid").length} unpaid invoices
             </div>
           </div>
         </div>

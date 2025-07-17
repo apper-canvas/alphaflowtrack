@@ -86,9 +86,9 @@ const ClientDetail = () => {
 
   // Calculate statistics
   const totalProjects = projects.length;
-  const activeProjects = projects.filter(p => p.status === "In Progress").length;
-  const completedProjects = projects.filter(p => p.status === "Completed").length;
-  const totalRevenue = projects.reduce((sum, project) => sum + (project.budget || 0), 0);
+const activeProjects = projects.filter(p => p.status_c === "In Progress").length;
+const completedProjects = projects.filter(p => p.status_c === "Completed").length;
+const totalRevenue = projects.reduce((sum, project) => sum + (project.budget_c || 0), 0);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -142,22 +142,22 @@ const ClientDetail = () => {
       >
         <div className="flex items-start gap-6">
           <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-            <span className="text-white font-bold text-xl">
-              {client.name.split(" ").map(n => n[0]).join("")}
+<span className="text-white font-bold text-xl">
+              {client.Name.split(" ").map(n => n[0]).join("")}
             </span>
           </div>
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                  {client.name}
+<h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  {client.Name}
                 </h2>
-                <p className="text-lg text-slate-600 dark:text-slate-400">
-                  {client.company}
+<p className="text-lg text-slate-600 dark:text-slate-400">
+                  {client.company_c}
                 </p>
               </div>
               <div className="text-sm text-slate-500 dark:text-slate-400">
-                Client since {format(new Date(client.createdAt), "MMMM yyyy")}
+Client since {format(new Date(client.createdAt_c), "MMMM yyyy")}
               </div>
             </div>
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -165,8 +165,8 @@ const ClientDetail = () => {
                 <ApperIcon name="Mail" className="h-5 w-5 text-slate-400" />
                 <div>
                   <p className="text-sm text-slate-500 dark:text-slate-400">Email</p>
-                  <p className="font-medium text-slate-900 dark:text-slate-100">
-                    {client.email}
+<p className="font-medium text-slate-900 dark:text-slate-100">
+                    {client.email_c}
                   </p>
                 </div>
               </div>
@@ -174,8 +174,8 @@ const ClientDetail = () => {
                 <ApperIcon name="Phone" className="h-5 w-5 text-slate-400" />
                 <div>
                   <p className="text-sm text-slate-500 dark:text-slate-400">Phone</p>
-                  <p className="font-medium text-slate-900 dark:text-slate-100">
-                    {client.phone}
+<p className="font-medium text-slate-900 dark:text-slate-100">
+                    {client.phone_c}
                   </p>
                 </div>
               </div>
@@ -251,36 +251,36 @@ const ClientDetail = () => {
                 className="glass-panel rounded-lg p-4 hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <h4 className="font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">
-                    {project.name}
+<h4 className="font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">
+                    {project.Name}
                   </h4>
-                  <Badge className={getStatusColor(project.status)}>
-                    {project.status}
+<Badge className={getStatusColor(project.status_c)}>
+                    {project.status_c}
                   </Badge>
                 </div>
                 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-500 dark:text-slate-400">Progress</span>
-                    <span className="font-medium text-slate-900 dark:text-slate-100">
-                      {project.progress}%
+<span className="font-medium text-slate-900 dark:text-slate-100">
+                      {project.progress_c}%
                     </span>
                   </div>
                   <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                     <div
-                      className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${project.progress}%` }}
+className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${project.progress_c}%` }}
                     />
                   </div>
                   
                   <div className="flex items-center justify-between text-sm mt-3">
                     <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
                       <ApperIcon name="Calendar" className="h-3 w-3" />
-                      {format(new Date(project.deadline), "MMM dd, yyyy")}
+{format(new Date(project.deadline_c), "MMM dd, yyyy")}
                     </div>
                     <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
                       <ApperIcon name="DollarSign" className="h-3 w-3" />
-                      ${project.budget.toLocaleString()}
+${project.budget_c.toLocaleString()}
                     </div>
                   </div>
                 </div>

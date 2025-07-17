@@ -47,10 +47,10 @@ const loadDashboardData = async () => {
       setClients(clientsData);
       setProjects(projectsData);
 
-      const activeProjects = projectsData.filter(p => p.status === "In Progress").length;
-      const pendingTasks = tasks.filter(t => t.status !== "Completed").length;
-      const paidInvoices = invoices.filter(i => i.status === "Paid");
-      const totalRevenue = paidInvoices.reduce((sum, invoice) => sum + (invoice.amount || 0), 0);
+const activeProjects = projectsData.filter(p => p.status_c === "In Progress").length;
+const pendingTasks = tasks.filter(t => t.status_c !== "Completed").length;
+const paidInvoices = invoices.filter(i => i.status_c === "Paid");
+      const totalRevenue = paidInvoices.reduce((sum, invoice) => sum + (invoice.amount_c || 0), 0);
 
       setStats({
         totalClients: clientsData.length,

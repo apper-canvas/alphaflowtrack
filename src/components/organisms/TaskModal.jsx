@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import ApperIcon from "@/components/ApperIcon";
 import Modal from "@/components/atoms/Modal";
-import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
 import Label from "@/components/atoms/Label";
-import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
 
 const TaskModal = ({ isOpen, onClose, task, projects, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -19,16 +19,16 @@ const TaskModal = ({ isOpen, onClose, task, projects, onSubmit }) => {
 
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
+useEffect(() => {
     if (task) {
       setFormData({
-        title: task.title || "",
+        title: task.title_c || "",
         description: task.description || "",
-        projectId: task.projectId || "",
-        priority: task.priority || "Medium",
-        status: task.status || "To Do",
-        dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : "",
-        assignedTo: task.assignedTo || ""
+        projectId: task.projectId_c || "",
+        priority: task.priority_c || "Medium",
+        status: task.status_c || "To Do",
+        dueDate: task.dueDate_c ? new Date(task.dueDate_c).toISOString().split('T')[0] : "",
+        assignedTo: task.assignedTo_c || ""
       });
     } else {
       setFormData({
@@ -155,9 +155,9 @@ const TaskModal = ({ isOpen, onClose, task, projects, onSubmit }) => {
               }`}
             >
               <option value="">Select project</option>
-              {projects.map(project => (
+{projects.map(project => (
                 <option key={project.Id} value={project.Id}>
-                  {project.name}
+                  {project.Name}
                 </option>
               ))}
             </select>
