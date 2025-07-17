@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { format } from "date-fns";
-import { toast } from "react-hot-toast";
-import ApperIcon from "@/components/ApperIcon";
-import Badge from "@/components/atoms/Badge";
-import Button from "@/components/atoms/Button";
-import timeTrackingService from "@/services/api/timeTrackingService";
+import React, { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { format } from 'date-fns'
+import { toast } from 'react-toastify'
+import ApperIcon from '@/components/ApperIcon'
+import Badge from '@/components/atoms/Badge'
+import Button from '@/components/atoms/Button'
+import timeTrackingService from '@/services/api/timeTrackingService'
 
 const TaskCard = ({ task, projectName, onEdit, onDelete, onView, isDragging = false }) => {
   const [activeTimer, setActiveTimer] = useState(null);
