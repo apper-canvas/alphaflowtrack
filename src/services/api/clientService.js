@@ -1,3 +1,5 @@
+import activityService from './activityService';
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class ClientService {
@@ -100,7 +102,7 @@ if (!response.success) {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulRecords = response.results.filter(result => result.success);
         const failedRecords = response.results.filter(result => !result.success);
         
@@ -109,7 +111,13 @@ if (!response.success) {
           throw new Error("Failed to create client");
         }
         
-        return successfulRecords[0]?.data;
+        const createdClient = successfulRecords[0]?.data;
+        if (createdClient) {
+          // Log activity
+          await activityService.logActivity('Create', 'Client', createdClient.Id);
+        }
+        
+        return createdClient;
       }
       
       throw new Error("Unexpected response format");
@@ -144,7 +152,7 @@ console.error("Error updating client with ID " + id + ":", response.message);
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulRecords = response.results.filter(result => result.success);
         const failedRecords = response.results.filter(result => !result.success);
         
@@ -153,7 +161,13 @@ console.error("Error updating client with ID " + id + ":", response.message);
           throw new Error("Failed to update client");
         }
         
-        return successfulRecords[0]?.data;
+        const updatedClient = successfulRecords[0]?.data;
+        if (updatedClient) {
+          // Log activity
+          await activityService.logActivity('Update', 'Client', parseInt(id));
+        }
+        
+        return updatedClient;
       }
       
       throw new Error("Unexpected response format");
@@ -182,13 +196,18 @@ console.error("Error deleting client with ID " + id + ":", response.message);
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulDeletions = response.results.filter(result => result.success);
         const failedDeletions = response.results.filter(result => !result.success);
         
         if (failedDeletions.length > 0) {
           console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`);
           throw new Error("Failed to delete client");
+        }
+        
+        if (successfulDeletions.length > 0) {
+          // Log activity
+          await activityService.logActivity('Delete', 'Client', parseInt(id));
         }
         
         return successfulDeletions.length > 0;

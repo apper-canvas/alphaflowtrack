@@ -1,5 +1,5 @@
-import React from "react";
-import Error from "@/components/ui/Error";
+import activityService from './activityService';
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class ProjectService {
@@ -166,7 +166,7 @@ async getById(id) {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulRecords = response.results.filter(result => result.success);
         const failedRecords = response.results.filter(result => !result.success);
         
@@ -175,7 +175,13 @@ async getById(id) {
           throw new Error("Failed to create project");
         }
         
-        return successfulRecords[0]?.data;
+        const createdProject = successfulRecords[0]?.data;
+        if (createdProject) {
+          // Log activity
+          await activityService.logActivity('Create', 'Project', createdProject.Id);
+        }
+        
+        return createdProject;
       }
       
       throw new Error("Unexpected response format");
@@ -217,7 +223,7 @@ async getById(id) {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulRecords = response.results.filter(result => result.success);
         const failedRecords = response.results.filter(result => !result.success);
         
@@ -226,7 +232,13 @@ async getById(id) {
           throw new Error("Failed to update project");
         }
         
-        return successfulRecords[0]?.data;
+        const updatedProject = successfulRecords[0]?.data;
+        if (updatedProject) {
+          // Log activity
+          await activityService.logActivity('Update', 'Project', parseInt(id));
+        }
+        
+        return updatedProject;
       }
       
       throw new Error("Unexpected response format");
@@ -255,13 +267,18 @@ async getById(id) {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulDeletions = response.results.filter(result => result.success);
         const failedDeletions = response.results.filter(result => !result.success);
         
         if (failedDeletions.length > 0) {
           console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`);
           throw new Error("Failed to delete project");
+        }
+        
+        if (successfulDeletions.length > 0) {
+          // Log activity
+          await activityService.logActivity('Delete', 'Project', parseInt(id));
         }
         
         return successfulDeletions.length > 0;

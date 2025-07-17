@@ -11,6 +11,7 @@ import clientService from "@/services/api/clientService";
 import projectService from "@/services/api/projectService";
 import taskService from "@/services/api/taskService";
 import invoiceService from "@/services/api/invoiceService";
+import activityService from "@/services/api/activityService";
 const Dashboard = () => {
   const [stats, setStats] = useState({
     totalClients: 0,
@@ -31,6 +32,11 @@ const Dashboard = () => {
   const [clients, setClients] = useState([]);
   const [projects, setProjects] = useState([]);
   const [modalLoading, setModalLoading] = useState(false);
+
+  // Activity states
+  const [activities, setActivities] = useState([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(false);
+  const [activitiesError, setActivitiesError] = useState("");
 const loadDashboardData = async () => {
     try {
       setLoading(true);
@@ -83,24 +89,41 @@ const paidInvoices = invoices.filter(i => i.status_c === "Paid");
     }
   };
 
+const loadActivities = async () => {
+    try {
+      setActivitiesLoading(true);
+      setActivitiesError("");
+      const activitiesData = await activityService.getAll(10);
+      setActivities(activitiesData);
+    } catch (err) {
+      setActivitiesError(err.message || "Failed to load activities");
+    } finally {
+      setActivitiesLoading(false);
+    }
+  };
+
   const handleClientCreated = () => {
     setShowClientModal(false);
     loadDashboardData();
+    loadActivities(); // Refresh activities after new client
   };
 
-  const handleProjectCreated = () => {
+const handleProjectCreated = () => {
     setShowProjectModal(false);
     loadDashboardData();
+    loadActivities(); // Refresh activities after new project
   };
 
   const handleTaskCreated = () => {
     setShowTaskModal(false);
     loadDashboardData();
+    loadActivities(); // Refresh activities after new task
   };
 
   const handleInvoiceCreated = () => {
     setShowInvoiceModal(false);
     loadDashboardData();
+    loadActivities(); // Refresh activities after new invoice
   };
 
   const openModal = (modalType) => {
@@ -123,8 +146,9 @@ const paidInvoices = invoices.filter(i => i.status_c === "Paid");
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     loadDashboardData();
+    loadActivities();
   }, []);
 
   if (loading) {
@@ -193,7 +217,7 @@ const paidInvoices = invoices.filter(i => i.status_c === "Paid");
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -203,47 +227,68 @@ const paidInvoices = invoices.filter(i => i.status_c === "Paid");
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
             Recent Activity
           </h3>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-white/5 dark:bg-slate-700/20">
-              <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs font-bold">✓</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                  Mobile App Development completed
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  2 hours ago
-                </p>
-              </div>
+          {activitiesLoading ? (
+            <div className="space-y-4">
+              <Loading />
             </div>
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-white/5 dark:bg-slate-700/20">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs font-bold">$</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                  Invoice INV-0001 marked as paid
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  4 hours ago
-                </p>
-              </div>
+          ) : activitiesError ? (
+            <Error message={activitiesError} onRetry={loadActivities} />
+          ) : activities.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-slate-500 dark:text-slate-400">No recent activity</p>
             </div>
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-white/5 dark:bg-slate-700/20">
-              <div className="w-8 h-8 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs font-bold">+</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                  New client Lisa Park added
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  1 day ago
-                </p>
-              </div>
+          ) : (
+            <div className="space-y-4">
+              {activities.map((activity) => {
+                const getActivityIcon = (type) => {
+                  switch (type) {
+                    case 'Create':
+                      return { icon: '+', gradient: 'from-emerald-500 to-teal-500' };
+                    case 'Update':
+                      return { icon: '✓', gradient: 'from-primary-500 to-secondary-500' };
+                    case 'Delete':
+                      return { icon: '×', gradient: 'from-red-500 to-rose-500' };
+                    default:
+                      return { icon: '•', gradient: 'from-accent-500 to-primary-500' };
+                  }
+                };
+
+                const formatTimeAgo = (timestamp) => {
+                  const now = new Date();
+                  const activityTime = new Date(timestamp);
+                  const diffInMinutes = Math.floor((now - activityTime) / (1000 * 60));
+                  
+                  if (diffInMinutes < 1) return 'Just now';
+                  if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+                  
+                  const diffInHours = Math.floor(diffInMinutes / 60);
+                  if (diffInHours < 24) return `${diffInHours} hours ago`;
+                  
+                  const diffInDays = Math.floor(diffInHours / 24);
+                  return `${diffInDays} days ago`;
+                };
+
+                const activityConfig = getActivityIcon(activity.activityType_c);
+
+                return (
+                  <div key={activity.Id} className="flex items-center space-x-3 p-3 rounded-lg bg-white/5 dark:bg-slate-700/20">
+                    <div className={`w-8 h-8 bg-gradient-to-r ${activityConfig.gradient} rounded-full flex items-center justify-center`}>
+                      <span className="text-white text-xs font-bold">{activityConfig.icon}</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        {activity.activityType_c} {activity.entityType_c.toLowerCase()} 
+                        {activity.user_c?.Name && ` by ${activity.user_c.Name}`}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {formatTimeAgo(activity.timestamp_c)}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+          )}
         </motion.div>
 
         <motion.div

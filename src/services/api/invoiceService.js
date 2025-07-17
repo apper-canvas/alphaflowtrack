@@ -1,3 +1,5 @@
+import activityService from './activityService';
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class InvoiceService {
@@ -147,7 +149,7 @@ class InvoiceService {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulRecords = response.results.filter(result => result.success);
         const failedRecords = response.results.filter(result => !result.success);
         
@@ -156,7 +158,13 @@ class InvoiceService {
           throw new Error("Failed to create invoice");
         }
         
-        return successfulRecords[0]?.data;
+        const createdInvoice = successfulRecords[0]?.data;
+        if (createdInvoice) {
+          // Log activity
+          await activityService.logActivity('Create', 'Invoice', createdInvoice.Id);
+        }
+        
+        return createdInvoice;
       }
       
       throw new Error("Unexpected response format");
@@ -194,7 +202,7 @@ class InvoiceService {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulRecords = response.results.filter(result => result.success);
         const failedRecords = response.results.filter(result => !result.success);
         
@@ -203,7 +211,13 @@ class InvoiceService {
           throw new Error("Failed to update invoice");
         }
         
-        return successfulRecords[0]?.data;
+        const updatedInvoice = successfulRecords[0]?.data;
+        if (updatedInvoice) {
+          // Log activity
+          await activityService.logActivity('Update', 'Invoice', parseInt(id));
+        }
+        
+        return updatedInvoice;
       }
       
       throw new Error("Unexpected response format");
@@ -240,7 +254,7 @@ class InvoiceService {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulRecords = response.results.filter(result => result.success);
         const failedRecords = response.results.filter(result => !result.success);
         
@@ -249,7 +263,13 @@ class InvoiceService {
           throw new Error("Failed to update invoice status");
         }
         
-        return successfulRecords[0]?.data;
+        const updatedInvoice = successfulRecords[0]?.data;
+        if (updatedInvoice) {
+          // Log activity for status update
+          await activityService.logActivity('Update', 'Invoice', parseInt(id));
+        }
+        
+        return updatedInvoice;
       }
       
       throw new Error("Unexpected response format");
@@ -278,13 +298,18 @@ class InvoiceService {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulDeletions = response.results.filter(result => result.success);
         const failedDeletions = response.results.filter(result => !result.success);
         
         if (failedDeletions.length > 0) {
           console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`);
           throw new Error("Failed to delete invoice");
+        }
+        
+        if (successfulDeletions.length > 0) {
+          // Log activity
+          await activityService.logActivity('Delete', 'Invoice', parseInt(id));
         }
         
         return successfulDeletions.length > 0;

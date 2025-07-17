@@ -1,3 +1,5 @@
+import activityService from "./activityService";
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class TaskService {
@@ -156,7 +158,7 @@ const params = {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulRecords = response.results.filter(result => result.success);
         const failedRecords = response.results.filter(result => !result.success);
         
@@ -165,7 +167,13 @@ const params = {
           throw new Error("Failed to create task");
         }
         
-        return successfulRecords[0]?.data;
+        const createdTask = successfulRecords[0]?.data;
+        if (createdTask) {
+          // Log activity
+          await activityService.logActivity('Create', 'Task', createdTask.Id);
+        }
+        
+        return createdTask;
       }
       
       throw new Error("Unexpected response format");
@@ -203,7 +211,7 @@ const params = {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulRecords = response.results.filter(result => result.success);
         const failedRecords = response.results.filter(result => !result.success);
         
@@ -212,7 +220,13 @@ const params = {
           throw new Error("Failed to update task");
         }
         
-        return successfulRecords[0]?.data;
+        const updatedTask = successfulRecords[0]?.data;
+        if (updatedTask) {
+          // Log activity
+          await activityService.logActivity('Update', 'Task', parseInt(id));
+        }
+        
+        return updatedTask;
       }
       
       throw new Error("Unexpected response format");
@@ -241,13 +255,18 @@ const params = {
         throw new Error(response.message);
       }
       
-      if (response.results) {
+if (response.results) {
         const successfulDeletions = response.results.filter(result => result.success);
         const failedDeletions = response.results.filter(result => !result.success);
         
         if (failedDeletions.length > 0) {
           console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`);
           throw new Error("Failed to delete task");
+        }
+        
+        if (successfulDeletions.length > 0) {
+          // Log activity
+          await activityService.logActivity('Delete', 'Task', parseInt(id));
         }
         
         return successfulDeletions.length > 0;
