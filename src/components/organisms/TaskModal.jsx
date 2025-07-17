@@ -25,7 +25,7 @@ useEffect(() => {
         title: task.title_c || "",
         description: task.description || "",
         projectId: task.projectId_c || "",
-priority: task.priority_c || "Medium",
+        priority: task.priority_c || "Medium",
         status: task.status_c || "Pending",
         dueDate: task.dueDate_c ? new Date(task.dueDate_c).toISOString().split('T')[0] : "",
         assignedTo: task.assignedTo_c || ""

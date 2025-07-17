@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { motion } from 'framer-motion'
-import ApperIcon from '@/components/ApperIcon'
-import TaskCard from '@/components/molecules/TaskCard'
-import Empty from '@/components/ui/Empty'
+import React, { useEffect } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { motion } from "framer-motion";
+import ApperIcon from "@/components/ApperIcon";
+import Empty from "@/components/ui/Empty";
+import TaskCard from "@/components/molecules/TaskCard";
 
 const KanbanBoard = ({ tasks, projects, onEdit, onDelete, onDragEnd }) => {
   // WARNING EXPLANATION: The defaultProps warning from react-beautiful-dnd is a known library issue
@@ -91,20 +91,19 @@ return tasks.filter(task => task.status_c === status);
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            {...provided.dragHandleProps}
+{...provided.dragHandleProps}
                             className={`transition-all duration-200 ${
                               snapshot.isDragging ? "rotate-2 scale-105" : ""
                             }`}
                           >
-<TaskCard
+                            <TaskCard
                               task={task}
-                              projectName={getProjectName(task.projectId)}
+                              projectName={getProjectName(task.projectId_c)}
                               onEdit={onEdit}
                               onDelete={onDelete}
                               onView={(task) => onEdit && onEdit(task)}
                               isDragging={snapshot.isDragging}
                             />
-                          </div>
                         )}
                       </Draggable>
                     ))}

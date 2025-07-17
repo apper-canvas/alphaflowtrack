@@ -68,9 +68,9 @@ const TaskList = ({ tasks, projects, onEdit, onDelete, onStatusChange }) => {
 {task.title_c}
                 </div>
                 <div className="flex items-center space-x-4 text-sm text-slate-500 dark:text-slate-400">
-<span>{getProjectName(task.projectId_c)}</span>
+                  <span>{getProjectName(task.projectId_c)}</span>
                   <span>•</span>
-<span>Due {format(new Date(task.dueDate_c), "MMM dd")}</span>
+                  <span>Due {format(new Date(task.dueDate_c), "MMM dd")}</span>
                 </div>
               </div>
 
