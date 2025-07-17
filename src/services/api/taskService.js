@@ -35,19 +35,13 @@ class TaskService {
     });
   }
 
-async create(taskData) {
+  async create(taskData) {
     return new Promise((resolve) => {
       setTimeout(() => {
         const newId = Math.max(...this.tasks.map(t => t.Id)) + 1;
         const newTask = {
           Id: newId,
-          title: taskData.title,
-          description: taskData.description || "",
-          status: taskData.status || "To Do",
-          priority: taskData.priority || "Medium",
-          dueDate: taskData.dueDate,
-          projectId: taskData.projectId,
-          assignedTo: taskData.assignedTo || "Unassigned"
+          ...taskData
         };
         this.tasks.push(newTask);
         resolve({ ...newTask });

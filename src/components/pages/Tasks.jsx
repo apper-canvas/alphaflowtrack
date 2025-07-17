@@ -5,8 +5,6 @@ import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import SearchBar from "@/components/molecules/SearchBar";
 import TaskList from "@/components/organisms/TaskList";
-import KanbanBoard from "@/components/organisms/KanbanBoard";
-import TaskModal from "@/components/organisms/TaskModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
@@ -19,9 +17,6 @@ const Tasks = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState("kanban");
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
 
   const loadData = async () => {
     try {
@@ -45,8 +40,7 @@ const Tasks = () => {
   }, []);
 
   const handleEdit = (task) => {
-    setSelectedTask(task);
-    setIsTaskModalOpen(true);
+    toast.info(`Edit task: ${task.title}`);
   };
 
   const handleDelete = async (task) => {
@@ -65,41 +59,20 @@ const Tasks = () => {
     try {
       const updatedTask = await taskService.update(taskId, { status: newStatus });
       setTasks(prev => prev.map(t => t.Id === taskId ? updatedTask : t));
-      toast.success(`Task moved to ${newStatus}`);
+      toast.success(`Task marked as ${newStatus.toLowerCase()}`);
     } catch (err) {
       toast.error("Failed to update task status");
     }
   };
 
   const handleAddTask = () => {
-    setSelectedTask(null);
-    setIsTaskModalOpen(true);
-  };
-
-  const handleTaskSubmit = async (taskData) => {
-    try {
-      if (selectedTask) {
-        const updatedTask = await taskService.update(selectedTask.Id, taskData);
-        setTasks(prev => prev.map(t => t.Id === selectedTask.Id ? updatedTask : t));
-      } else {
-        const newTask = await taskService.create(taskData);
-        setTasks(prev => [...prev, newTask]);
-      }
-    } catch (err) {
-      throw new Error("Failed to save task");
-    }
-  };
-
-  const handleModalClose = () => {
-    setIsTaskModalOpen(false);
-    setSelectedTask(null);
+    toast.info("Add new task functionality");
   };
 
   const filteredTasks = tasks.filter(task =>
     task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     task.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    task.priority.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (task.description && task.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    task.priority.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -123,32 +96,10 @@ const Tasks = () => {
             Organize and track your project tasks and deliverables
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center bg-white dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
-            <Button
-              variant={viewMode === "kanban" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("kanban")}
-              className="h-8 px-3"
-            >
-              <ApperIcon name="Columns" className="h-4 w-4 mr-2" />
-              Kanban
-            </Button>
-            <Button
-              variant={viewMode === "list" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("list")}
-              className="h-8 px-3"
-            >
-              <ApperIcon name="List" className="h-4 w-4 mr-2" />
-              List
-            </Button>
-          </div>
-          <Button onClick={handleAddTask} className="w-full sm:w-auto">
-            <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
-            Add Task
-          </Button>
-        </div>
+        <Button onClick={handleAddTask} className="w-full sm:w-auto">
+          <ApperIcon name="Plus" className="h-4 w-4 mr-2" />
+          Add Task
+        </Button>
       </motion.div>
 
       <motion.div
@@ -159,7 +110,7 @@ const Tasks = () => {
         <SearchBar
           value={searchTerm}
           onChange={setSearchTerm}
-          placeholder="Search tasks by title, status, priority, or description..."
+          placeholder="Search tasks by title, status, or priority..."
           className="max-w-md"
         />
       </motion.div>
@@ -182,33 +133,15 @@ const Tasks = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          {viewMode === "kanban" ? (
-            <KanbanBoard
-              tasks={filteredTasks}
-              projects={projects}
-              onStatusChange={handleStatusChange}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ) : (
-            <TaskList
-              tasks={filteredTasks}
-              projects={projects}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onStatusChange={handleStatusChange}
-            />
-          )}
+          <TaskList
+            tasks={filteredTasks}
+            projects={projects}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onStatusChange={handleStatusChange}
+          />
         </motion.div>
       )}
-
-      <TaskModal
-        isOpen={isTaskModalOpen}
-        onClose={handleModalClose}
-        task={selectedTask}
-        projects={projects}
-        onSubmit={handleTaskSubmit}
-      />
     </div>
   );
 };
