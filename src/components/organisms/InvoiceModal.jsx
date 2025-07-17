@@ -6,7 +6,7 @@ import Input from "@/components/atoms/Input";
 import Label from "@/components/atoms/Label";
 import Button from "@/components/atoms/Button";
 import invoiceService from "@/services/api/invoiceService";
-
+import projectService from "@/services/api/projectService";
 const InvoiceModal = ({ isOpen, onClose, clients, projects, onInvoiceCreated, onInvoiceUpdated, invoice }) => {
   const [formData, setFormData] = useState({
     clientId: '',
@@ -15,8 +15,10 @@ const InvoiceModal = ({ isOpen, onClose, clients, projects, onInvoiceCreated, on
     items: [{ description: '', amount: 0 }]
   });
   const [loading, setLoading] = useState(false);
-const [errors, setErrors] = useState({});
-
+  const [errors, setErrors] = useState({});
+  const [clientProjects, setClientProjects] = useState([]);
+  const [projectLoading, setProjectLoading] = useState(false);
+  const [projectError, setProjectError] = useState('');
   // Set form data when editing
   React.useEffect(() => {
     if (invoice) {
@@ -28,7 +30,7 @@ const [errors, setErrors] = useState({});
       });
     }
   }, [invoice]);
-  const handleInputChange = (field, value) => {
+const handleInputChange = async (field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -39,6 +41,34 @@ const [errors, setErrors] = useState({});
       setErrors(prev => ({
         ...prev,
         [field]: ''
+      }));
+    }
+
+    // If client is selected, fetch projects for that client
+    if (field === 'clientId' && value) {
+      setFormData(prev => ({
+        ...prev,
+        projectId: '' // Clear project selection when client changes
+      }));
+      setProjectLoading(true);
+      setProjectError('');
+      
+      try {
+        const clientProjectsData = await projectService.getByClientId(value);
+        setClientProjects(clientProjectsData);
+      } catch (error) {
+        setProjectError('Failed to load projects for this client');
+        setClientProjects([]);
+        toast.error('Failed to load projects for selected client');
+      } finally {
+        setProjectLoading(false);
+      }
+    } else if (field === 'clientId' && !value) {
+      // Clear projects when no client is selected
+      setClientProjects([]);
+      setFormData(prev => ({
+        ...prev,
+        projectId: ''
       }));
     }
   };
@@ -152,9 +182,6 @@ const handleSubmit = async (e) => {
     onClose();
   };
 
-  const availableProjects = projects.filter(project => 
-    !formData.clientId || project.clientId_c === parseInt(formData.clientId)
-  );
   return (
     <Modal
     isOpen={isOpen}
@@ -181,16 +208,18 @@ className="mt-1 block w-full rounded-md border border-slate-300 dark:border-slat
                     {errors.clientId}
                 </p>}
             </div>
-            <div>
+<div>
                 <Label htmlFor="projectId">Project *</Label>
                 <select
                     id="projectId"
                     value={formData.projectId}
                     onChange={e => handleInputChange("projectId", e.target.value)}
-className="mt-1 block w-full rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                    disabled={!formData.clientId}>
-                    <option value="">Select a project</option>
-                    {availableProjects.map(project => (
+                    className="mt-1 block w-full rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                    disabled={!formData.clientId || projectLoading}>
+                    <option value="">
+                        {projectLoading ? "Loading projects..." : "Select a project"}
+                    </option>
+                    {clientProjects.map(project => (
                         <option key={project.Id} value={project.Id}>
                             {project.Name}
                         </option>
@@ -198,6 +227,9 @@ className="mt-1 block w-full rounded-md border border-slate-300 dark:border-slat
                 </select>
                 {errors.projectId && <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.projectId}
+                </p>}
+                {projectError && <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {projectError}
                 </p>}
             </div>
         </div>
