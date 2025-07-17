@@ -447,11 +447,10 @@ const fetchProjectDetails = async () => {
               {timeEntries.length === 0 && (
                 <div className="text-center py-6 text-slate-500 dark:text-slate-400">
                   <ApperIcon name="Clock" className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No time entries yet</p>
+<p className="text-sm">No time entries yet</p>
                 </div>
               )}
             </div>
-</div>
           </div>
         </div>
       </motion.div>
