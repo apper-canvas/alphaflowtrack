@@ -1,11 +1,27 @@
-import React from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { motion } from "framer-motion";
-import ApperIcon from "@/components/ApperIcon";
-import TaskCard from "@/components/molecules/TaskCard";
-import Empty from "@/components/ui/Empty";
+import React, { useEffect } from 'react'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { motion } from 'framer-motion'
+import ApperIcon from '@/components/ApperIcon'
+import TaskCard from '@/components/molecules/TaskCard'
+import Empty from '@/components/ui/Empty'
 
 const KanbanBoard = ({ tasks, projects, onEdit, onDelete, onDragEnd }) => {
+  // Suppress defaultProps warning from react-beautiful-dnd library
+  // This is a known issue with the library's internal implementation
+  // TODO: Remove when react-beautiful-dnd is updated to remove defaultProps
+  useEffect(() => {
+    const originalWarn = console.warn
+    console.warn = (...args) => {
+      if (args[0]?.includes && args[0].includes('Support for defaultProps will be removed from memo components')) {
+        return
+      }
+      originalWarn.apply(console, args)
+    }
+    
+    return () => {
+      console.warn = originalWarn
+    }
+  }, [])
   const columns = [
     { id: "To Do", title: "To Do", color: "bg-slate-100 dark:bg-slate-800", icon: "Circle" },
     { id: "In Progress", title: "In Progress", color: "bg-amber-100 dark:bg-amber-900/20", icon: "Clock" },
