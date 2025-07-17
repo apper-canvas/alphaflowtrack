@@ -96,7 +96,7 @@ const KanbanBoard = ({ tasks, projects, onEdit, onDelete, onDragEnd }) => {
                               snapshot.isDragging ? "rotate-2 scale-105" : ""
                             }`}
                           >
-                            <TaskCard
+<TaskCard
                               task={task}
                               projectName={getProjectName(task.projectId)}
                               onEdit={onEdit}

@@ -37,7 +37,7 @@ const TaskList = ({ tasks, projects, onEdit, onDelete, onStatusChange }) => {
   return (
     <div className="glass-card rounded-xl overflow-hidden">
       <div className="space-y-2 p-6">
-        {tasks.map((task, index) => (
+{tasks.map((task, index) => (
           <motion.div
             key={task.Id}
             initial={{ opacity: 0, x: -20 }}

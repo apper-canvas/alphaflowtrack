@@ -1,28 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { format, differenceInDays } from "date-fns";
+import { differenceInDays, format } from "date-fns";
 import { toast } from "react-toastify";
 import Chart from "react-apexcharts";
+import timeTrackingService from "@/services/api/timeTrackingService";
 import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Badge from "@/components/atoms/Badge";
-import ProgressBar from "@/components/molecules/ProgressBar";
-import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import KanbanBoard from "@/components/organisms/KanbanBoard";
 import ProjectModal from "@/components/organisms/ProjectModal";
 import TaskList from "@/components/organisms/TaskList";
-import KanbanBoard from "@/components/organisms/KanbanBoard";
-import projectService from "@/services/api/projectService";
-import clientService from "@/services/api/clientService";
+import Projects from "@/components/pages/Projects";
+import Tasks from "@/components/pages/Tasks";
+import ProgressBar from "@/components/molecules/ProgressBar";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
 import taskService from "@/services/api/taskService";
+import clientService from "@/services/api/clientService";
+import projectService from "@/services/api/projectService";
 
 const ProjectDetail = () => {
-  const { id } = useParams();
+const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(null);
   const [client, setClient] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [timeEntries, setTimeEntries] = useState([]);
+  const [totalProjectTime, setTotalProjectTime] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -31,7 +36,7 @@ const ProjectDetail = () => {
     fetchProjectDetails();
   }, [id]);
 
-  const fetchProjectDetails = async () => {
+const fetchProjectDetails = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -49,6 +54,14 @@ const ProjectDetail = () => {
         const clientData = await clientService.getById(projectData.clientId);
         setClient(clientData);
       }
+
+      // Fetch time tracking data
+      const [entries, totalTime] = await Promise.all([
+        timeTrackingService.getEntriesByProjectId(id),
+        timeTrackingService.getTotalTimeByProject(id)
+      ]);
+      setTimeEntries(entries);
+      setTotalProjectTime(totalTime);
     } catch (err) {
       setError(err.message);
       toast.error("Failed to load project details");
@@ -320,7 +333,7 @@ const ProjectDetail = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+</motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -361,6 +374,87 @@ const ProjectDetail = () => {
         </motion.div>
       </div>
 
+      {/* Time Tracking Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="glass-card rounded-xl p-6"
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Time Tracking
+          </h3>
+          <ApperIcon name="Clock" className="h-5 w-5 text-primary-500" />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Time Summary */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+              <div>
+                <span className="text-sm text-slate-500 dark:text-slate-400">Total Time Logged</span>
+                <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                  {timeTrackingService.formatDuration(totalProjectTime)}
+                </p>
+              </div>
+              <ApperIcon name="Timer" className="h-8 w-8 text-primary-500" />
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-slate-500 dark:text-slate-400">Active Timers</span>
+                <span className="font-medium text-emerald-600">
+                  {timeTrackingService.getActiveTimers().length}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-slate-500 dark:text-slate-400">Time Entries</span>
+                <span className="font-medium">{timeEntries.length}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Time Entries */}
+          <div>
+            <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-3">
+              Recent Time Entries
+            </h4>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {timeEntries.slice(0, 5).map((entry) => {
+                const task = tasks.find(t => t.Id === entry.taskId);
+                return (
+                  <div key={entry.Id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        {task?.title || "Unknown Task"}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {format(new Date(entry.date), "MMM dd, yyyy")}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        {timeTrackingService.formatDuration(entry.duration)}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {format(new Date(entry.startTime), "HH:mm")} - {format(new Date(entry.endTime), "HH:mm")}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+              {timeEntries.length === 0 && (
+                <div className="text-center py-6 text-slate-500 dark:text-slate-400">
+                  <ApperIcon name="Clock" className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No time entries yet</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Timeline Visualization */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -395,9 +489,9 @@ const ProjectDetail = () => {
           type="bar"
           height={300}
         />
-      </motion.div>
+</motion.div>
 
-{/* Task Board */}
+      {/* Task Board */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
