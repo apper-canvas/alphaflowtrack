@@ -35,14 +35,19 @@ class ProjectService {
     });
   }
 
-  async create(projectData) {
+async create(projectData) {
     return new Promise((resolve) => {
       setTimeout(() => {
         const newId = Math.max(...this.projects.map(p => p.Id)) + 1;
         const newProject = {
           Id: newId,
           ...projectData,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          actualSpend: 0,
+          timeline: [],
+          description: projectData.description || "",
+          startDate: projectData.startDate || new Date().toISOString(),
+          endDate: projectData.endDate || projectData.deadline
         };
         this.projects.push(newProject);
         resolve({ ...newProject });

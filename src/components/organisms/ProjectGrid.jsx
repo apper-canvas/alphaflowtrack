@@ -1,11 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 import ProgressBar from "@/components/molecules/ProgressBar";
-
 const ProjectGrid = ({ projects, clients, onEdit, onDelete }) => {
+  const navigate = useNavigate();
+  
   if (!projects || projects.length === 0) {
     return null;
   }
@@ -25,16 +27,21 @@ const ProjectGrid = ({ projects, clients, onEdit, onDelete }) => {
     return variants[status] || "default";
   };
 
+  const handleProjectClick = (projectId) => {
+    navigate(`/projects/${projectId}`);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {projects.map((project, index) => (
+{projects.map((project, index) => (
         <motion.div
           key={project.Id}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
           whileHover={{ scale: 1.02, y: -4 }}
-          className="glass-card rounded-xl p-6 hover-lift"
+          className="glass-card rounded-xl p-6 hover-lift cursor-pointer"
+          onClick={() => handleProjectClick(project.Id)}
         >
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
