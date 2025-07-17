@@ -396,7 +396,7 @@ const ProjectDetail = () => {
         />
       </motion.div>
 
-      {/* Task List Preview */}
+{/* Task Management */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -407,16 +407,53 @@ const ProjectDetail = () => {
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Project Tasks
           </h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/tasks")}
-          >
-            View All Tasks
-          </Button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center bg-white dark:bg-slate-700 rounded-lg p-1 border border-slate-200 dark:border-slate-600">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3"
+              >
+                <ApperIcon name="Columns" className="h-4 w-4 mr-1" />
+                Kanban
+              </Button>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/tasks")}
+            >
+              View All Tasks
+            </Button>
+          </div>
         </div>
         {tasks.length > 0 ? (
-          <TaskList tasks={tasks} projects={[project]} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {["To Do", "In Progress", "Review", "Done"].map((status) => (
+              <div key={status} className="bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    status === "To Do" ? "bg-slate-400" :
+                    status === "In Progress" ? "bg-amber-400" :
+                    status === "Review" ? "bg-blue-400" : "bg-emerald-400"
+                  }`}></div>
+                  {status}
+                </h4>
+                <div className="space-y-2">
+                  {tasks.filter(task => task.status === status).map(task => (
+                    <div key={task.Id} className="bg-white dark:bg-slate-800 rounded-md p-3 border border-slate-200 dark:border-slate-600">
+                      <div className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-1">
+                        {task.title}
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                        Due: {format(new Date(task.dueDate), "MMM dd")}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="text-center py-8 text-slate-500 dark:text-slate-400">
             No tasks found for this project
