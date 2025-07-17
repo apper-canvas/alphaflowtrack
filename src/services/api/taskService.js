@@ -19,10 +19,13 @@ class TaskService {
   async getAll() {
     try {
       await delay(300);
-      const params = {
+const params = {
         fields: [
           { field: { Name: "Name" } },
-          { field: { Name: "projectId_c" } },
+          { 
+            field: { Name: "projectId_c" },
+            referenceField: { field: { Name: "Name" } }
+          },
           { field: { Name: "title_c" } },
           { field: { Name: "status_c" } },
           { field: { Name: "priority_c" } },
@@ -53,10 +56,13 @@ class TaskService {
   async getById(id) {
     try {
       await delay(200);
-      const params = {
+const params = {
         fields: [
           { field: { Name: "Name" } },
-          { field: { Name: "projectId_c" } },
+          { 
+            field: { Name: "projectId_c" },
+            referenceField: { field: { Name: "Name" } }
+          },
           { field: { Name: "title_c" } },
           { field: { Name: "status_c" } },
           { field: { Name: "priority_c" } },
@@ -87,10 +93,13 @@ class TaskService {
   async getByProjectId(projectId) {
     try {
       await delay(250);
-      const params = {
+const params = {
         fields: [
           { field: { Name: "Name" } },
-          { field: { Name: "projectId_c" } },
+          { 
+            field: { Name: "projectId_c" },
+            referenceField: { field: { Name: "Name" } }
+          },
           { field: { Name: "title_c" } },
           { field: { Name: "status_c" } },
           { field: { Name: "priority_c" } },
