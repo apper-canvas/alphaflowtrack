@@ -6,11 +6,18 @@ import TaskCard from '@/components/molecules/TaskCard'
 import Empty from '@/components/ui/Empty'
 
 const KanbanBoard = ({ tasks, projects, onEdit, onDelete, onDragEnd }) => {
-  // Note: The defaultProps warning from react-beautiful-dnd is a known issue with the library
-  // React is deprecating defaultProps in memo components, but this warning comes from the
-  // library's internal implementation, not our code. This is informational only and does not
-  // affect functionality. The warning will be resolved when react-beautiful-dnd is updated
-  // to use JavaScript default parameters instead of defaultProps.
+  // WARNING EXPLANATION: The defaultProps warning from react-beautiful-dnd is a known library issue
+  // 
+  // Source: Connect(Droppable) component in react-beautiful-dnd v13.1.1
+  // Issue: Library internally uses defaultProps on memo components, which React plans to deprecate
+  // Impact: Informational warning only - no functionality is affected
+  // Status: This is not an error in our code but in the library's implementation
+  // 
+  // Future Solutions:
+  // 1. Wait for react-beautiful-dnd to update (library is in maintenance mode)
+  // 2. Consider migrating to @dnd-kit/core when major refactoring is needed
+  // 3. The warning can be safely ignored until React actually removes defaultProps support
+  
   const columns = [
     { id: "To Do", title: "To Do", color: "bg-slate-100 dark:bg-slate-800", icon: "Circle" },
     { id: "In Progress", title: "In Progress", color: "bg-amber-100 dark:bg-amber-900/20", icon: "Clock" },
